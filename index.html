@@ -143,7 +143,7 @@
     </div>
   </section>
 
-  <!-- Early safety wiring (picker works even if libs fail) -->
+  <!-- Early safety wiring (picker works even if main script fails) -->
   <script>
     (function(){
       var chooseBtn = document.getElementById('chooseBtn');
@@ -164,32 +164,32 @@
     })();
   </script>
 
-  <!-- Dependencies (we also have a JS fallback loader below) -->
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fast-xml-parser@4.5.0/dist/fast-xml-parser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <!-- Local, self-hosted libraries (no CDNs) -->
+  <script src="./vendor/jszip.min.js"></script>
+  <script src="./vendor/fxp.min.js"></script>
+  <script src="./vendor/FileSaver.min.js"></script>
+  <script>
+    // Quick sanity: show missing libs in Diagnostics if any; also expose constructors
+    (function(){
+      var hasFXP = !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder);
+      var ok = !!window.JSZip && hasFXP && !!window.saveAs;
+      var diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
+      if (diag) diag.style.display = 'block';
+      if (diagLib) {
+        diagLib.innerHTML = ok
+          ? '• Libraries: <span style="color:#34d399">OK (local)</span>'
+          : '• Libraries: <span style="color:#ff6b6b">Missing /vendor files (jszip.min.js, fxp.min.js, FileSaver.min.js)</span>';
+      }
+      window.__XMLParserCtor = hasFXP ? window.fxp.XMLParser : null;
+      window.__XMLBuilderCtor = hasFXP ? window.fxp.XMLBuilder : null;
+    })();
+  </script>
 
-  <!-- App with resilient loader + diagnostics -->
+  <!-- App -->
   <script>
     document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
 
-    // ---- Resilient loader (tries jsDelivr, then unpkg if needed) ----
-    function loadScript(src){ return new Promise(function(res, rej){ var s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=function(){ rej(new Error('Failed to load '+src)); }; document.head.appendChild(s); }); }
-    async function ensureLibs(){
-      var ok = !!(window.JSZip) && ((window.fxp && window.fxp.XMLParser) || window.XMLParser);
-      if (ok) return true;
-      try {
-        if (!window.JSZip)      await loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
-        if (!(window.fxp||window.XMLParser)) await loadScript('https://cdn.jsdelivr.net/npm/fast-xml-parser@4.5.0/dist/fast-xml-parser.min.js');
-      } catch(e){
-        // fallback to unpkg
-        if (!window.JSZip)      await loadScript('https://unpkg.com/jszip@3.10.1/dist/jszip.min.js');
-        if (!(window.fxp||window.XMLParser)) await loadScript('https://unpkg.com/fast-xml-parser@4.5.0/dist/fast-xml-parser.min.js');
-      }
-      return !!(window.JSZip) && ((window.fxp && window.fxp.XMLParser) || window.XMLParser);
-    }
-
-    // ---- Small helpers ----
+    // Helpers
     function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
     function getRuns(p){ return ensureArray(p && p.r); }
     function pStyleName(p){
@@ -445,7 +445,7 @@
       return { report:report, fixedBlob:fixedBlob, reportBlob:reportBlob };
     }
 
-    // ===== UI + diagnostics wiring =====
+    // ---------- UI + Diagnostics ----------
     (function(){
       var drop      = document.getElementById('drop');
       var fileInput = document.getElementById('file');
@@ -473,7 +473,7 @@
       function showDiag(){ if(diagWrap) diagWrap.style.display = 'block'; }
       function setDiagLib(ok, msg){
         showDiag(); if(!diagLib) return;
-        diagLib.innerHTML = '• Libraries: ' + (ok ? '<span style="color:#34d399">OK</span>' : '<span style="color:#ffcc00">Not ready</span>') + (msg? ' — ' + msg : '');
+        diagLib.innerHTML = '• Libraries: ' + (ok ? '<span style="color:#34d399">OK (local)</span>' : '<span style="color:#ff6b6b">Missing</span>') + (msg? ' — ' + msg : '');
       }
       function setDiagFile(text){ showDiag(); if(diagFile) diagFile.innerHTML = '• File: ' + text; }
       function setDiagReady(ok){ showDiag(); if(diagReady) diagReady.innerHTML = '• Ready: ' + (ok ? '<span style="color:#34d399">yes</span>' : '<span style="color:#ffcc00">no</span>'); }
@@ -499,12 +499,10 @@
         setDiagReady(!!currentFile);
       }
 
-      // Show initial library status (will update again on Run)
-      setDiagLib(!!(window.JSZip) && ((window.fxp && window.fxp.XMLParser) || window.XMLParser), '(preload check)');
-      setDiagFile('<em>none selected</em>');
-      setDiagReady(false);
+      // Initial diag: confirm local libs present
+      setDiagLib(!!window.JSZip && !!(window.__XMLParserCtor && window.__XMLBuilderCtor), '(startup)');
 
-      // More chooser wiring
+      // Choosing & DnD
       if (chooseBtn && fileInput) chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
       fileInput.addEventListener('change', function(){
         var f = (fileInput.files && fileInput.files[0]) || null;
@@ -517,8 +515,6 @@
         }
         setFile(f);
       });
-
-      // Drag & drop
       ['dragenter','dragover'].forEach(function(evt){
         drop.addEventListener(evt, function(e){ e.preventDefault(); e.stopPropagation(); drop.classList.add('hover'); });
       });
@@ -538,7 +534,7 @@
       drop.addEventListener('click', function(){ fileInput.click(); });
       drop.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); fileInput.click(); } });
 
-      // Hook global errors into diagnostics
+      // Global error → diagnostics
       window.addEventListener('error', function(e){ setDiagErr('Script error: ' + (e.message || '')); });
       window.addEventListener('unhandledrejection', function(e){ setDiagErr('Unhandled promise: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason || ''))); });
 
@@ -547,29 +543,20 @@
         setDiagErr('');
         if (!currentFile){ statusEl.innerHTML = "<span class='err'>No file selected.</span>"; return; }
 
-        // Ensure libraries are present (with fallback CDNs)
-        statusEl.textContent = 'Preparing libraries…';
-        var libsOk = await ensureLibs();
-        setDiagLib(libsOk, libsOk ? '' : '(could not load libraries)');
-        if (!libsOk){
-          statusEl.innerHTML = "<span class='err'>Required libraries did not load. Refresh and try again.</span>";
+        // Ensure local libs exist (no network)
+        var XMLParserCtor = window.__XMLParserCtor;
+        var XMLBuilderCtor = window.__XMLBuilderCtor;
+        if (!window.JSZip || !XMLParserCtor || !XMLBuilderCtor) {
+          setDiagLib(false, '(missing local /vendor files)');
+          setDiagErr('Local libraries not found. Ensure /vendor/jszip.min.js, /vendor/fxp.min.js, /vendor/FileSaver.min.js exist.');
+          statusEl.innerHTML = "<span class='err'>Libraries missing. See Diagnostics.</span>";
           return;
         }
+        setDiagLib(true, '(local)');
 
         // Build parser/builder
-        try {
-          var FXP = window.fxp || window.FXP || (window['fast-xml-parser'] || {});
-          var XMLParserCtor = (FXP && FXP.XMLParser) || window.XMLParser;
-          var XMLBuilderCtor = (FXP && FXP.XMLBuilder) || window.XMLBuilder;
-          if (!XMLParserCtor || !XMLBuilderCtor) throw new Error('XML parser not available.');
-          if (!window.JSZip) throw new Error('JSZip not available.');
-          parser = new XMLParserCtor({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix:true });
-          builder = new XMLBuilderCtor({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
-        } catch (e) {
-          setDiagErr(e.message || String(e));
-          statusEl.innerHTML = "<span class='err'>Error:</span> " + (e.message || String(e));
-          return;
-        }
+        parser = new XMLParserCtor({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix:true });
+        builder = new XMLBuilderCtor({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
 
         runBtn.disabled = true; runBtn.setAttribute('aria-disabled','true');
         statusEl.textContent = 'Processing… (all on your device)';
@@ -623,5 +610,12 @@
       });
     })();
   </script>
+
+  <footer role="contentinfo">
+    <div class="wrap">
+      <div>© <span id="year"></span> Accessr</div>
+      <div class="mini">Free, client-side accessibility checker for Word documents.</div>
+    </div>
+  </footer>
 </body>
 </html>
