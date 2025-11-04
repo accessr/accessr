@@ -91,9 +91,13 @@
 
       <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
         <p><strong>Drag & drop</strong> your file here, or</p>
-        <label class="btn" for="file">Choose a .docx</label>
-        <input id="file" type="file" accept=".docx" />
+
+        <!-- Chromebook/iOS friendly chooser -->
+        <button id="chooseBtn" type="button" class="btn">Choose a file</button>
+        <input id="file" type="file" />
+
         <p class="mini" id="filename" aria-live="polite"></p>
+        <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
       </div>
 
       <div class="controls" role="group" aria-label="Options">
@@ -203,7 +207,7 @@
   <script src="https://cdn.jsdelivr.net/npm/fast-xml-parser@4.5.0/dist/fast-xml-parser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-  <!-- App (no template literals, no optional chaining) -->
+  <!-- App (Chromebook-friendly; no template literals / optional chaining) -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -467,9 +471,10 @@
       return { report:report, fixedBlob:fixedBlob, reportBlob:reportBlob };
     }
 
-    // UI
+    // ---------- UI + Chromebook-friendly uploader ----------
     var drop = document.getElementById('drop');
     var fileInput = document.getElementById('file');
+    var chooseBtn = document.getElementById('chooseBtn');
     var runBtn = document.getElementById('runBtn');
     var dlFixed = document.getElementById('dlFixed');
     var dlReport = document.getElementById('dlReport');
@@ -480,9 +485,21 @@
     var langSel = document.getElementById('lang');
     var minFont = document.getElementById('minFont');
     var autoFix = document.getElementById('autoFix');
+    var debugEl = document.getElementById('debug');
 
     var currentFile = null;
 
+    function looksLikeDocx(f){
+      if (!f) return false;
+      var nameOk = /\.docx$/i.test(f.name || '');
+      var mimeOk = (f.type || '').indexOf('officedocument.wordprocessingml.document') !== -1;
+      // ChromeOS sometimes leaves MIME blank, so accept name OR MIME
+      return nameOk || mimeOk;
+    }
+    function dbg(msg){
+      debugEl.style.display = 'block';
+      debugEl.textContent = String(msg);
+    }
     function setFile(f){
       currentFile = f;
       runBtn.disabled = !currentFile;
@@ -493,23 +510,41 @@
       rawReport.textContent = ''; summary.textContent = '';
     }
 
-    fileInput.addEventListener('change', function(){ setFile((fileInput.files && fileInput.files[0]) || null); });
+    if (chooseBtn) chooseBtn.addEventListener('click', function(){ fileInput.click(); });
 
-    // Drag & drop accessibility
-    ['dragenter','dragover'].forEach(function(evt){
+    fileInput.addEventListener('change', function(){
+      var f = (fileInput.files && fileInput.files[0]) || null;
+      if (!f){ setFile(null); dbg('No file selected (picker cancelled).'); return; }
+      dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
+      if (!looksLikeDocx(f)){
+        setFile(null);
+        status.innerHTML = "<span class='err'>Please choose a Microsoft Word (.docx) file.</span>";
+        return;
+      }
+      setFile(f);
+    });
+
+    // Drag & drop (desktop)
+    ;['dragenter','dragover'].forEach(function(evt){
       drop.addEventListener(evt, function(e){ e.preventDefault(); e.stopPropagation(); drop.classList.add('hover'); });
     });
-    ['dragleave','drop'].forEach(function(evt){
+    ;['dragleave','drop'].forEach(function(evt){
       drop.addEventListener(evt, function(e){ e.preventDefault(); e.stopPropagation(); drop.classList.remove('hover'); });
     });
     drop.addEventListener('drop', function(e){
       var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f && /\.docx$/i.test(f.name)) setFile(f);
-      else status.innerHTML = "<span class='err'>Please drop a .docx file.</span>";
+      if (!f){ dbg('Drop had no file.'); return; }
+      dbg('Dropped: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0));
+      if (!looksLikeDocx(f)){
+        status.innerHTML = "<span class='err'>Please drop a Word (.docx) file.</span>";
+        return;
+      }
+      setFile(f);
     });
     drop.addEventListener('click', function(){ fileInput.click(); });
     drop.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); fileInput.click(); } });
 
+    // Run
     runBtn.addEventListener('click', async function(){
       if (!currentFile) return;
       runBtn.disabled = true; runBtn.setAttribute('aria-disabled','true');
