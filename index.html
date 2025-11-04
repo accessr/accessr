@@ -47,7 +47,8 @@
     .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
     .drop.hover{background:#102338}
     .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    input[type="file"]{display:none}
+    /* Keep file input visible so it’s always clickable */
+    #file{display:block; margin:8px auto 0}
     .range{display:flex;gap:10px;align-items:center}
     input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
     .live{min-height:1.3em;margin-top:8px}
@@ -140,6 +141,33 @@
     </div>
   </section>
 
+  <!-- Safety wiring (runs BEFORE heavy scripts; ensures picker always works) -->
+  <script>
+    (function(){
+      var chooseBtn = document.getElementById('chooseBtn');
+      var fileInput = document.getElementById('file');
+      var filenameEl = document.getElementById('filename');
+      var runBtn = document.getElementById('runBtn');
+      var debugEl = document.getElementById('debug');
+
+      function dbg(msg){
+        if (!debugEl) return;
+        debugEl.style.display = 'block';
+        debugEl.textContent = String(msg);
+      }
+
+      if (chooseBtn && fileInput){
+        chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
+        fileInput.addEventListener('change', function(){
+          var f = (fileInput.files && fileInput.files[0]) || null;
+          if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
+          if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
+          if (f) dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
+        });
+      }
+    })();
+  </script>
+
   <!-- How it works -->
   <section class="wrap section grid grid-3" id="how" aria-label="How it works">
     <div class="card"><h2>1) Upload</h2><p>Select a <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> or drag it in. Your document is processed locally and never leaves your device.</p></div>
@@ -207,14 +235,14 @@
   <script src="https://cdn.jsdelivr.net/npm/fast-xml-parser@4.5.0/dist/fast-xml-parser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-  <!-- App (Chromebook-friendly; no template literals / optional chaining) -->
+  <!-- App (Chromebook-friendly; parser init happens on Run click) -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // XML helpers
-    var parser = new window.XMLParser({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix:true });
-    var builder = new window.XMLBuilder({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
+    // Globals assigned later (on Run)
+    var parser = null, builder = null;
 
+    // Utility helpers
     function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
     function getRuns(p){ return ensureArray(p && p.r); }
     function pStyleName(p){
@@ -290,33 +318,7 @@
       var first=rows[0]; first.trPr = first.trPr || {}; first.trPr.tblHeader = { val:true }; return true;
     }
 
-    function makeReport(file){
-      return {
-        file: file,
-        issues: [],
-        add: function(code, message, location, fix, details){
-          this.issues.push({ code:code, message:message, location:location, fix_applied:!!fix, details: details||{} });
-        },
-        toMarkdown: function(){
-          if(!this.issues.length) return '# Accessibility Report for `' + this.file + '`\n\n🎉 No issues found.\n';
-          var out = ['# Accessibility Report for `' + this.file + '`',''];
-          for (var i=0;i<this.issues.length;i++){
-            var it=this.issues[i];
-            var line='- **['+it.code+']** '+it.message+' — *'+it.location+'* ('+(it.fix_applied?'✅ fixed':'⚠ needs review')+')';
-            if (it.details && Object.keys(it.details).length){
-              line+='\n  - details: `'+JSON.stringify(it.details)+'`';
-            }
-            out.push(line);
-          }
-          return out.join('\n');
-        },
-        counts: function(){
-          var t=this.issues.length, f=0; for(var i=0;i<t;i++){ if(this.issues[i].fix_applied) f++; }
-          return { total:t, fixed:f, flagged:t-f };
-        }
-      };
-    }
-
+    // XML read/write (parser must be assigned before calling these)
     async function readXml(zip, name){
       var xml = await zip.files[name].async('string');
       return parser.parse(xml);
@@ -471,7 +473,7 @@
       return { report:report, fixedBlob:fixedBlob, reportBlob:reportBlob };
     }
 
-    // ---------- UI + Chromebook-friendly uploader ----------
+    // ---------- UI ----------
     var drop = document.getElementById('drop');
     var fileInput = document.getElementById('file');
     var chooseBtn = document.getElementById('chooseBtn');
@@ -493,10 +495,10 @@
       if (!f) return false;
       var nameOk = /\.docx$/i.test(f.name || '');
       var mimeOk = (f.type || '').indexOf('officedocument.wordprocessingml.document') !== -1;
-      // ChromeOS sometimes leaves MIME blank, so accept name OR MIME
-      return nameOk || mimeOk;
+      return nameOk || mimeOk; // accept either
     }
     function dbg(msg){
+      if (!debugEl) return;
       debugEl.style.display = 'block';
       debugEl.textContent = String(msg);
     }
@@ -509,20 +511,6 @@
       dlFixed.style.display = 'none'; dlReport.style.display = 'none';
       rawReport.textContent = ''; summary.textContent = '';
     }
-
-    if (chooseBtn) chooseBtn.addEventListener('click', function(){ fileInput.click(); });
-
-    fileInput.addEventListener('change', function(){
-      var f = (fileInput.files && fileInput.files[0]) || null;
-      if (!f){ setFile(null); dbg('No file selected (picker cancelled).'); return; }
-      dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
-      if (!looksLikeDocx(f)){
-        setFile(null);
-        status.innerHTML = "<span class='err'>Please choose a Microsoft Word (.docx) file.</span>";
-        return;
-      }
-      setFile(f);
-    });
 
     // Drag & drop (desktop)
     ;['dragenter','dragover'].forEach(function(evt){
@@ -544,9 +532,25 @@
     drop.addEventListener('click', function(){ fileInput.click(); });
     drop.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); fileInput.click(); } });
 
-    // Run
+    // Run (initialises parser here to avoid early crashes)
     runBtn.addEventListener('click', async function(){
       if (!currentFile) return;
+
+      // Build parser/builders now; if CDNs failed, show a friendly error
+      try {
+        var FXP = window.fxp || window.FXP || (window['fast-xml-parser'] || {});
+        var XMLParserCtor = (FXP && FXP.XMLParser) || window.XMLParser;
+        var XMLBuilderCtor = (FXP && FXP.XMLBuilder) || window.XMLBuilder;
+        if (!XMLParserCtor || !XMLBuilderCtor) {
+          throw new Error('Parser library did not load. Refresh the page and try again.');
+        }
+        parser = new XMLParserCtor({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix:true });
+        builder = new XMLBuilderCtor({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
+      } catch (e) {
+        status.innerHTML = "<span class='err'>Error:</span> " + (e && e.message ? e.message : String(e));
+        return;
+      }
+
       runBtn.disabled = true; runBtn.setAttribute('aria-disabled','true');
       status.textContent = 'Processing… (all on your device)';
       dlFixed.style.display = 'none'; dlReport.style.display = 'none';
@@ -558,6 +562,14 @@
           lang: langSel.value || 'en-AU',
           applyFixes: !!autoFix.checked
         };
+
+        // Guard: verify it’s docx
+        if (!looksLikeDocx(currentFile)) {
+          status.innerHTML = "<span class='err'>That doesn’t look like a .docx file. Please choose a Word (.docx) document.</span>";
+          runBtn.disabled = false; runBtn.setAttribute('aria-disabled','false');
+          return;
+        }
+
         var result = await processFile(currentFile, opts);
         var report = result.report, fixedBlob = result.fixedBlob, reportBlob = result.reportBlob;
 
