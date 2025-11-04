@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Accessr — Free Accessibility Checker & Fixer for Word (.docx)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Accessr is a free, privacy-first accessibility checker for Microsoft Word .docx. Runs entirely in your browser — no uploads, no data collection." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%230B1020'/%3E%3Cpath fill='%233B82F6' d='M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z'/%3E%3Ccircle cx='196' cy='92' r='10' fill='%2310B981'/%3E%3C/svg%3E" />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1622; --text:#eef4fb; --muted:#9fb0c2;
+      --brand:#3B82F6; --accent:#10B981; --border:#1b2430;
+      --ok:#34d399; --warn:#ffcc00; --err:#ff6b6b;
+      --focus: 0 0 0 3px rgba(59,130,246,.45), 0 0 0 6px rgba(59,130,246,.2);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,#09111b,#0b1020);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+    a{color:var(--brand)}
+    a:focus,button:focus,input:focus,select:focus,summary:focus{outline:none;box-shadow:var(--focus);border-radius:8px}
+    header{position:sticky;top:0;backdrop-filter:saturate(120%) blur(8px);background:rgba(11,16,32,.7);border-bottom:1px solid var(--border);z-index:10}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+    .nav{display:flex;align-items:center;gap:16px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+    .brand svg{width:28px;height:28px}
+    .brand strong{font-weight:700}
+    .grow{flex:1}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);background:#121a26;color:var(--text);border-radius:10px;cursor:pointer;text-decoration:none}
+    .btn:hover{background:#152030}
+    .primary{background:linear-gradient(180deg,#10263a,#0f1e30);border-color:#1e3046}
+    .primary:hover{background:linear-gradient(180deg,#14324d,#14283f)}
+    .hero{padding:72px 0 28px;border-bottom:1px solid var(--border)}
+    .hero h1{font-size:38px;line-height:1.1;margin:0 0 12px}
+    .hero p{max-width:720px;color:var(--muted);margin:0}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:#0d141d;color:var(--muted);font-size:12px}
+    .section{padding:28px 0}
+    .grid{display:grid;gap:18px}
+    @media (min-width:900px){ .grid-2{grid-template-columns:1.1fr .9fr;} .grid-3{grid-template-columns:repeat(3,1fr);} }
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
+    h2{margin:0 0 12px;font-size:22px}
+    .mini{font-size:13px;color:var(--muted)}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;border:1px solid #273142;background:#0d141d}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+    details{background:#0c121a;border:1px solid #17202c;border-radius:12px;padding:12px}
+    pre{background:#0b1017;border:1px solid #17202c;border-radius:8px;padding:12px;overflow:auto}
+    footer{border-top:1px solid var(--border);padding:24px 0;color:var(--muted)}
+    .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
+    .drop.hover{background:#102338}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    input[type="file"]{display:none}
+    .range{display:flex;gap:10px;align-items:center}
+    input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
+    .live{min-height:1.3em;margin-top:8px}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header role="banner">
+    <div class="wrap nav" aria-label="Site header">
+      <a class="brand" href="#home" aria-label="Accessr Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-hidden="true">
+          <rect width="256" height="256" rx="48" fill="#0B1020"/>
+          <path fill="#3B82F6" d="M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z"/>
+          <circle cx="196" cy="92" r="10" fill="#10B981"/>
+        </svg>
+        <strong>Accessr</strong>
+      </a>
+      <div class="grow"></div>
+      <a class="btn" href="#tool">Launch tool</a>
+      <a class="btn" href="#faq">FAQ</a>
+      <a class="btn primary" href="#privacy">Privacy</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="wrap hero" id="home">
+    <span class="chip">Free • Runs in your browser • No uploads</span>
+    <h1>Make your Word documents accessible — in minutes, not days.</h1>
+    <p>Upload a <strong>.docx</strong>, run checks, auto-fix common issues (headings, lists, alt text, table headers, language & font sizing), and download a cleaned file plus an audit report — all without your document ever leaving your device.</p>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="#tool" aria-label="Jump to tool">Get started</a>
+      <a class="btn" href="#how">How it works</a>
+    </div>
+  </section>
+
+  <!-- Main tool -->
+  <section class="wrap section grid grid-2" id="tool" aria-label="Accessibility tool">
+    <div class="card" aria-labelledby="upload-h">
+      <h2 id="upload-h">Check & Fix your .docx</h2>
+      <p class="mini">Built for government, business, higher-ed, and community groups. No signup. No servers.</p>
+
+      <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
+        <p><strong>Drag & drop</strong> your file here, or</p>
+        <label class="btn" for="file">Choose a .docx</label>
+        <input id="file" type="file" accept=".docx" />
+        <p class="mini" id="filename" aria-live="polite"></p>
+      </div>
+
+      <div class="controls" role="group" aria-label="Options">
+        <div class="range">
+          <label for="lang" class="mini">Language</label>
+          <select id="lang" aria-label="Default language for runs">
+            <option value="en-AU">English (Australia)</option>
+            <option value="en-GB">English (UK)</option>
+            <option value="en-US">English (US)</option>
+          </select>
+        </div>
+        <div class="range">
+          <label for="minFont" class="mini">Min font (pt)</label>
+          <input id="minFont" type="number" min="10" max="16" step="1" value="11" />
+        </div>
+        <label class="mini" style="display:flex;align-items:center;gap:8px">
+          <input id="autoFix" type="checkbox" checked /> Apply safe auto-fixes
+        </label>
+      </div>
+
+      <div class="controls">
+        <button id="runBtn" class="btn primary" disabled aria-disabled="true">Run checks</button>
+        <a id="dlFixed" class="btn" style="display:none" download>Download fixed .docx</a>
+        <a id="dlReport" class="btn" style="display:none" download>Download report.md</a>
+      </div>
+      <div id="status" class="live" aria-live="polite"></div>
+    </div>
+
+    <div class="card" aria-labelledby="results-h">
+      <h2 id="results-h">Results</h2>
+      <div id="summary" class="mini" style="margin-bottom:8px"></div>
+      <details>
+        <summary>Show raw report (Markdown)</summary>
+        <pre id="rawReport"></pre>
+      </details>
+      <div style="margin-top:12px">
+        <span class="pill"><span class="ok">✅</span> Fixed</span>
+        <span class="pill"><span class="warn">•</span> Needs review</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="wrap section grid grid-3" id="how" aria-label="How it works">
+    <div class="card"><h2>1) Upload</h2><p>Select a <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> or drag it in. Your document is processed locally and never leaves your device.</p></div>
+    <div class="card"><h2>2) Check & Fix</h2><p>We flag common issues: fake headings & skipped levels, tiny text, missing image alt text, fake bullets, missing table headers, raw URLs, & missing language. Safe auto-fixes are applied if enabled.</p></div>
+    <div class="card"><h2>3) Download</h2><p>Grab a cleaned <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> and a Markdown report for your records or internal QA workflows.</p></div>
+  </section>
+
+  <!-- Features -->
+  <section class="wrap section" aria-label="Key features">
+    <div class="card">
+      <h2>What gets checked & fixed</h2>
+      <ul style="display:grid;gap:12px" role="list">
+        <li><strong>Headings</strong> — detect fake headings & level skips; convert obvious fakes → <code>Heading 2</code>.</li>
+        <li><strong>Text size</strong> — flag runs below your size floor (default 11pt) and raise them.</li>
+        <li><strong>Images</strong> — flag missing alt; add placeholder <em>“IMAGE – add descriptive alt text”</em>.</li>
+        <li><strong>Lists</strong> — convert “- ” / “• ” into real list styling (conservative & safe).</li>
+        <li><strong>Tables</strong> — mark likely header rows to repeat for better export.</li>
+        <li><strong>Links</strong> — flag raw URLs; recommend descriptive link text.</li>
+        <li><strong>Language</strong> — set run language if missing (e.g., <code>en-AU</code>).</li>
+      </ul>
+      <p class="mini">Note: Full WCAG conformance depends on your final web format; this prepares Word docs for cleaner export (Word HTML / Mammoth / Pandoc).</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="wrap section" id="faq" aria-label="Frequently asked questions">
+    <div class="card">
+      <h2>FAQ</h2>
+      <details>
+        <summary>Does my file get uploaded to a server?</summary>
+        <p>No. Everything runs in your browser using Web APIs. Your file never leaves your device.</p>
+      </details>
+      <details>
+        <summary>What kinds of issues can’t be fully checked?</summary>
+        <p>Color contrast and complex shapes/SmartArt are limited in Word’s XML. This tool flags likely problems but can’t guarantee full WCAG compliance without exporting to HTML and running a web a11y scanner.</p>
+      </details>
+      <details>
+        <summary>Can I process confidential documents?</summary>
+        <p>Yes—because processing is local. Always follow your organisation’s policies.</p>
+      </details>
+      <details>
+        <summary>Will you add true numbered/bulleted lists?</summary>
+        <p>This MVP applies safe list styling. Advanced numbering (editing <code>word/numbering.xml</code>) can be added if you want a more opinionated fix pass.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="wrap section" id="privacy" aria-label="Privacy policy">
+    <div class="card">
+      <h2>Privacy</h2>
+      <p>We do not collect, transmit, or store your documents. All processing happens locally in your browser. If you host this page yourself, review any third-party analytics you add to ensure they do not capture document contents.</p>
+    </div>
+  </section>
+
+  <footer role="contentinfo">
+    <div class="wrap">
+      <div>© <span id="year"></span> Accessr</div>
+      <div class="mini">Free, client-side accessibility checker for Word documents.</div>
+    </div>
+  </footer>
+
+  <!-- Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fast-xml-parser@4.5.0/dist/fast-xml-parser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <!-- App -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // XML helpers
+    const parser = new window.XMLParser({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix:true });
+    const builder = new window.XMLBuilder({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
+
+    const ensureArray = (x)=> Array.isArray(x) ? x : (x == null ? [] : [x]);
+    const getRuns = (p)=> ensureArray(p.r);
+    const pStyleName = (p)=> p?.pPr?.pStyle?.val || p?.pPr?.pStyle;
+    const setPStyle = (p, name)=> { p.pPr = p.pPr || {}; p.pPr.pStyle = { val:name }; };
+    const halfPoints = (pt)=> Math.round(pt*2);
+    const isFakeHeading = (txt)=>{
+      const t=(txt||'').trim(); if(t.length<4) return false;
+      return [
+        /^[A-Z0-9][A-Z0-9\s\-:&]{3,}$/,
+        /^\d+(?:\.\d+)*\s+.+$/,
+        /^(Appendix|Annex|Section)\s+\w+/i
+      ].some(rx=>rx.test(t));
+    };
+    const getTextFromParagraph = (p)=>{
+      let s=''; for(const r of getRuns(p)){ const t=r?.t;
+        if(typeof t==='string') s+=t; else if(t && typeof t==='object' && t['#text']) s+=t['#text'];
+      } return s.trim();
+    };
+    const enforceRunSize = (r, minPt)=>{
+      r.rPr = r.rPr || {};
+      const sz = r.rPr.sz?.val ?? r.rPr.sz;
+      if (sz!=null){ const n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minPt)){ r.rPr.sz={val:halfPoints(minPt)}; return true; } }
+      return false;
+    };
+    const ensureRunLang = (r, lang)=>{
+      r.rPr = r.rPr || {};
+      const hasLang = r.rPr.lang && (r.rPr.lang.val || r.rPr.lang.eastAsia || r.rPr.lang.bidi);
+      if (!hasLang){ r.rPr.lang = { val:lang, eastAsia:lang, bidi:lang }; return true; }
+      return false;
+    };
+    const stripFakeBullet = (p)=>{
+      const runs=getRuns(p); if(!runs.length) return false;
+      const r0=runs[0]; let t=r0.t; let s='';
+      if(typeof t==='string') s=t; else if(t && typeof t==='object' && t['#text']) s=t['#text'];
+      const stripped = s.replace(/^(-|\*|•)\s+/, '');
+      if(stripped!==s){ if(typeof t==='string') r0.t=stripped; else r0.t={'#text':stripped}; return true; }
+      return false;
+    };
+    const isProbableHeaderRow = (row)=>{
+      const cells=ensureArray(row.tc); let hits=0;
+      for(const c of cells){
+        const paras=ensureArray(c.p);
+        const txt = paras.map(getTextFromParagraph).join(' ').trim();
+        if(!txt) continue;
+        if(txt.length<=25) hits++;
+        if(/^[A-Z\s0-9]+$/.test(txt)) hits++;
+        if(/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/.test(txt)) hits++;
+      }
+      return hits >= Math.max(1, Math.floor(cells.length/2));
+    };
+    const setTableHeaderRow = (tbl)=>{
+      const rows=ensureArray(tbl.tr); if(!rows.length) return false;
+      const first=rows[0]; first.trPr = first.trPr || {}; first.trPr.tblHeader = { val:true }; return true;
+    };
+
+    function makeReport(file){
+      return {
+        file, issues: [],
+        add(code, message, location, fix=false, details={}){
+          this.issues.push({ code, message, location, fix_applied:fix, details });
+        },
+        toMarkdown(){
+          if(!this.issues.length) return `# Accessibility Report for \\`${this.file}\\`\\n\\n🎉 No issues found.\\n`;
+          return ['# Accessibility Report for `'+this.file+'`','',
+            ...this.issues.map(i=>`- **[${i.code}]** ${i.message} — *${i.location}* (${i.fix_applied?'✅ fixed':'⚠ needs review'})`+
+              (i.details && Object.keys(i.details).length?`\\n  - details: \\`${JSON.stringify(i.details)}\\``:'')
+            )
+          ].join('\\n');
+        },
+        counts(){ const t=this.issues.length,f=this.issues.filter(i=>i.fix_applied).length; return { total:t,fixed:f,flagged:t-f }; }
+      }
+    }
+
+    async function readXml(zip, name){
+      const xml = await zip.files[name].async('string');
+      return parser.parse(xml);
+    }
+    function writeXml(zip, name, obj){ zip.file(name, builder.build(obj)); }
+    function listWordXmlParts(zip){
+      const out=[]; for(const n of Object.keys(zip.files)){ if(/^word\/document\.xml$/.test(n)) out.push(n); if(/^word\/header\d+\.xml$/.test(n)) out.push(n); if(/^word\/footer\d+\.xml$/.test(n)) out.push(n); } return out;
+    }
+
+    function processDocPart(docObj, report, opts){
+      const { minFontPt, lang, applyFixes } = opts;
+      const document = docObj.document; if(!document || !document.body) return;
+
+      const body=document.body, blocks=[];
+      Object.keys(body).forEach(k=> ensureArray(body[k]).forEach(n=> blocks.push({type:k,node:n})));
+
+      // Headings
+      let lastH=0;
+      blocks.forEach((blk,i)=>{
+        if(blk.type!=='p') return;
+        const p=blk.node, style=pStyleName(p)||'', txt=getTextFromParagraph(p);
+        if(/^Heading\s*([1-9])$/i.test(style)){
+          const lvl=Number(style.replace(/[^\d]/g,''))||1;
+          if(lastH && (lvl-lastH)>1) report.add('H-LEVEL-SKIP',`Skipped heading level from H${lastH} to H${lvl}`,`Paragraph ${i+1}`);
+          lastH=lvl;
+        } else if(isFakeHeading(txt)){
+          report.add('H-FAKE','Looks like a heading but is not using a Heading style.',`Paragraph ${i+1}`,false,{text:txt});
+          if(applyFixes){ setPStyle(p,'Heading 2'); report.add('H-FAKE->FIX','Converted fake heading to "Heading 2".',`Paragraph ${i+1}`,true,{text:txt}); }
+        }
+      });
+
+      const paragraphs = blocks.filter(b=>b.type==='p').map(b=>b.node);
+      let totalImg=0, missingAlt=0, altFixed=0;
+
+      paragraphs.forEach((p,i)=>{
+        let tooSmall=false, sizeFixed=false, langFixed=false;
+
+        for(const r of getRuns(p)){
+          const rPr=r.rPr||{}, sz=rPr.sz?.val ?? rPr.sz;
+          if(sz!=null){ const n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minFontPt)){ tooSmall=true; if(applyFixes){ if(enforceRunSize(r,minFontPt)) sizeFixed=true; } } }
+          if(applyFixes){ if(ensureRunLang(r, lang)) langFixed=true; }
+
+          const drawing=r.drawing;
+          if(drawing){
+            const all=[...(Array.isArray(drawing.inline)?drawing.inline:[drawing.inline]).filter(Boolean),
+                       ...(Array.isArray(drawing.anchor)?drawing.anchor:[drawing.anchor]).filter(Boolean)];
+            all.forEach(d=>{
+              if(!d || !d.docPr) return;
+              totalImg++;
+              const has = d.docPr.descr && (''+d.docPr.descr).trim()!=='';
+              if(!has){ missingAlt++; if(applyFixes){ d.docPr.descr='IMAGE – add descriptive alt text'; altFixed++; } }
+            });
+          }
+        }
+        if(tooSmall) report.add('TXT-SIZE',`Text under ${minFontPt}pt detected.`,`Paragraph ${i+1}`);
+        if(sizeFixed) report.add('TXT-SIZE->FIX',`Raised font size to ${minFontPt}pt.`,`Paragraph ${i+1}`,true);
+        if(langFixed) report.add('DOC-LANG->FIX',`Set language to ${lang} on missing runs.`,`Paragraph ${i+1}`,true);
+
+        const t=getTextFromParagraph(p);
+        if(/https?:\/\/\S+/.test(t)) report.add('LINK-RAW','Raw URL found; consider descriptive link text.',`Paragraph ${i+1}`,false,{text:t});
+
+        if(/^(-|\*|•)\s+\S+/.test(t)){
+          const hasNumPr=!!p?.pPr?.numPr; const isList=(pStyleName(p)||'').toLowerCase().includes('list');
+          if(!hasNumPr && !isList){
+            report.add('LIST-FAKE','Paragraph looks like a fake bullet; convert to a real list style.',`Paragraph ${i+1}`,false,{text:t});
+            if(applyFixes){ stripFakeBullet(p); setPStyle(p,'ListParagraph'); report.add('LIST-FAKE->FIX','Converted fake bullet to a list paragraph style.',`Paragraph ${i+1}`,true); }
+          }
+        }
+      });
+
+      if(totalImg>0 && missingAlt>0){
+        report.add('IMG-ALT',`${missingAlt} of ${totalImg} images missing alt text.`,'Document');
+        if(applyFixes && altFixed>0) report.add('IMG-ALT->FIX',`Added placeholder alt text to ${altFixed} image(s).`,'Document',true);
+      }
+
+      const tables = blocks.filter(b=>b.type==='tbl').map(b=>b.node);
+      tables.forEach((tbl,j)=>{
+        const rows=ensureArray(tbl.tr); if(!rows.length) return;
+        const first=rows[0]; const already=!!first?.trPr?.tblHeader;
+        if(!already && isProbableHeaderRow(first)){
+          report.add('TBL-HEADER','Table likely needs first row marked as header.',`Table ${j+1}`);
+          if(applyFixes){ if(setTableHeaderRow(tbl)) report.add('TBL-HEADER->FIX','Marked first row as a repeating header.',`Table ${j+1}`,true); }
+        }
+      });
+
+      // Soft doc-level language warning (post-fix inspection)
+      let hadLang=false;
+      outer: for(const p of paragraphs) for(const r of getRuns(p)){ const lg=r?.rPr?.lang; if(lg && (lg.val||lg.eastAsia||lg.bidi)){ hadLang=true; break outer; } }
+      if(!hadLang) report.add('DOC-LANG','No document language detected; set a default (e.g., en-AU).','Document');
+    }
+
+    async function processFile(file, opts){
+      const buffer = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(buffer);
+      const parts = listWordXmlParts(zip);
+      if(!parts.length) throw new Error('No Word XML parts found in document.');
+      const report = makeReport(file.name);
+
+      for(const name of parts){
+        const js = await readXml(zip, name);
+        processDocPart(js, report, opts);
+        if(opts.applyFixes) writeXml(zip, name, js);
+      }
+
+      let fixedBlob = null;
+      if(opts.applyFixes){
+        const content = await zip.generateAsync({ type:'blob' });
+        fixedBlob = new Blob([content], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      }
+      const md = report.toMarkdown();
+      const reportBlob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      return { report, fixedBlob, reportBlob };
+    }
+
+    // UI
+    const drop = document.getElementById('drop');
+    const fileInput = document.getElementById('file');
+    const runBtn = document.getElementById('runBtn');
+    const dlFixed = document.getElementById('dlFixed');
+    const dlReport = document.getElementById('dlReport');
+    const rawReport = document.getElementById('rawReport');
+    const status = document.getElementById('status');
+    const filename = document.getElementById('filename');
+    const summary = document.getElementById('summary');
+    const langSel = document.getElementById('lang');
+    const minFont = document.getElementById('minFont');
+    const autoFix = document.getElementById('autoFix');
+
+    let currentFile = null;
+
+    function setFile(f){
+      currentFile = f;
+      runBtn.disabled = !currentFile;
+      runBtn.setAttribute('aria-disabled', String(!currentFile));
+      filename.textContent = currentFile ? `Selected file: ${currentFile.name}` : '';
+      status.textContent = currentFile ? 'Ready to process.' : '';
+      dlFixed.style.display = 'none'; dlReport.style.display = 'none';
+      rawReport.textContent = ''; summary.textContent = '';
+    }
+
+    fileInput.addEventListener('change', ()=> setFile(fileInput.files?.[0] || null));
+
+    // Drag & drop accessibility
+    ['dragenter','dragover'].forEach(evt=> drop.addEventListener(evt, e=>{ e.preventDefault(); e.stopPropagation(); drop.classList.add('hover'); }));
+    ['dragleave','drop'].forEach(evt=> drop.addEventListener(evt, e=>{ e.preventDefault(); e.stopPropagation(); drop.classList.remove('hover'); }));
+    drop.addEventListener('drop', (e)=>{
+      const f = e.dataTransfer.files?.[0];
+      if (f && /\.docx$/i.test(f.name)) setFile(f);
+      else status.innerHTML = "<span class='err'>Please drop a .docx file.</span>";
+    });
+    drop.addEventListener('click', ()=> fileInput.click());
+    drop.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); fileInput.click(); } });
+
+    runBtn.addEventListener('click', async ()=>{
+      if (!currentFile) return;
+      runBtn.disabled = true; runBtn.setAttribute('aria-disabled','true');
+      status.textContent = 'Processing… (all on your device)';
+      dlFixed.style.display = 'none'; dlReport.style.display = 'none';
+      rawReport.textContent = ''; summary.textContent = '';
+
+      try {
+        const opts = {
+          minFontPt: Number(minFont.value || 11),
+          lang: langSel.value || 'en-AU',
+          applyFixes: !!autoFix.checked
+        };
+        const { report, fixedBlob, reportBlob } = await processFile(currentFile, opts);
+
+        const counts = report.counts();
+        summary.innerHTML =
+          `<span class="pill"><span class="warn">⚠</span> Total: ${counts.total}</span> ` +
+          `<span class="pill"><span class="ok">✅</span> Fixed: ${counts.fixed}</span> ` +
+          `<span class="pill"><span class="warn">•</span> Needs review: ${counts.flagged}</span>`;
+
+        rawReport.textContent = report.toMarkdown();
+
+        const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+        const base = currentFile.name.replace(/\.docx$/i,'') || 'document';
+
+        if (reportBlob) {
+          const url = URL.createObjectURL(reportBlob);
+          dlReport.href = url;
+          dlReport.download = `${base}.a11y-report-${ts}.md`;
+          dlReport.style.display = 'inline-flex';
+        }
+        if (fixedBlob && opts.applyFixes) {
+          const url = URL.createObjectURL(fixedBlob);
+          dlFixed.href = url;
+          dlFixed.download = `${base}.fixed-${ts}.docx`;
+          dlFixed.style.display = 'inline-flex';
+        }
+
+        status.textContent = opts.applyFixes
+          ? 'Done. Download your fixed document and report below.'
+          : 'Done. Download your report below.';
+      } catch (err) {
+        console.error(err);
+        status.innerHTML = `<span class="err">Error:</span> ${err.message || err}`;
+      } finally {
+        runBtn.disabled = !currentFile;
+        runBtn.setAttribute('aria-disabled', String(!currentFile));
+      }
+    });
+  </script>
+</body>
+</html>
