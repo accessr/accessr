@@ -1,296 +1,574 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Accessr — Free Accessibility Checker & Fixer for Word (.docx)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Accessr is a free, privacy-first accessibility checker for Microsoft Word .docx. Runs entirely in your browser — no uploads, no data collection." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%230B1020'/%3E%3Cpath fill='%233B82F6' d='M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z'/%3E%3Ccircle cx='196' cy='92' r='10' fill='%2310B981'/%3E%3C/svg%3E" />
-  <style>
-    :root{
-      --bg:#0b1020; --panel:#0f1622; --text:#eef4fb; --muted:#9fb0c2;
-      --brand:#3B82F6; --accent:#10B981; --border:#1b2430;
-      --ok:#34d399; --warn:#ffcc00; --err:#ff6b6b;
-      --focus: 0 0 0 3px rgba(59,130,246,.45), 0 0 0 6px rgba(59,130,246,.2);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:linear-gradient(180deg,#09111b,#0b1020);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
-    a{color:var(--brand)}
-    a:focus,button:focus,input:focus,select:focus,summary:focus{outline:none;box-shadow:var(--focus);border-radius:8px}
-    header{position:sticky;top:0;backdrop-filter:saturate(120%) blur(8px);background:rgba(11,16,32,.7);border-bottom:1px solid var(--border);z-index:10}
-    .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-    .nav{display:flex;align-items:center;gap:16px;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
-    .brand svg{width:28px;height:28px}
-    .brand strong{font-weight:700}
-    .grow{flex:1}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);background:#121a26;color:var(--text);border-radius:10px;cursor:pointer;text-decoration:none}
-    .btn:hover{background:#152030}
-    .primary{background:linear-gradient(180deg,#10263a,#0f1e30);border-color:#1e3046}
-    .primary:hover{background:linear-gradient(180deg,#14324d,#14283f)}
-    .hero{padding:72px 0 28px;border-bottom:1px solid var(--border)}
-    .hero h1{font-size:38px;line-height:1.1;margin:0 0 12px}
-    .hero p{max-width:720px;color:var(--muted);margin:0}
-    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:#0d141d;color:var(--muted);font-size:12px}
-    .section{padding:28px 0}
-    .grid{display:grid;gap:18px}
-    @media (min-width:900px){ .grid-2{grid-template-columns:1.1fr .9fr;} .grid-3{grid-template-columns:repeat(3,1fr);} }
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
-    h2{margin:0 0 12px;font-size:22px}
-    .mini{font-size:13px;color:var(--muted)}
-    .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;border:1px solid #273142;background:#0d141d}
-    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
-    details{background:#0c121a;border:1px solid #17202c;border-radius:12px;padding:12px}
-    pre{background:#0b1017;border:1px solid #17202c;border-radius:8px;padding:12px;overflow:auto}
-    footer{border-top:1px solid var(--border);padding:24px 0;color:var(--muted)}
-    .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
-    .drop.hover{background:#102338}
-    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    #file{display:block;margin:8px auto 0}
-    .range{display:flex;gap:10px;align-items:center}
-    input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
-    .live{min-height:1.3em;margin-top:8px}
-  </style>
+  <meta charset="utf-8" />
+  <title>Accessr — Free Accessibility Checker & Fixer for Word (.docx)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Accessr is a free, privacy-first accessibility checker for Microsoft Word .docx. Runs entirely in your browser — no uploads, no data collection." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%230B1020'/%3E%3Cpath fill='%233B82F6' d='M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z'/%3E%3Ccircle cx='196' cy='92' r='10' fill='%2310B981'/%3E%3C/svg%3E" />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1622; --text:#eef4fb; --muted:#9fb0c2;
+      --brand:#3B82F6; --accent:#10B981; --border:#1b2430;
+      --ok:#34d399; --warn:#ffcc00; --err:#ff6b6b;
+      --focus: 0 0 0 3px rgba(59,130,246,.45), 0 0 0 6px rgba(59,130,246,.2);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,#09111b,#0b1020);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+    a{color:var(--brand)}
+    a:focus,button:focus,input:focus,select:focus,summary:focus{outline:none;box-shadow:var(--focus);border-radius:8px}
+    header{position:sticky;top:0;backdrop-filter:saturate(120%) blur(8px);background:rgba(11,16,32,.7);border-bottom:1px solid var(--border);z-index:10}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+    .nav{display:flex;align-items:center;gap:16px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+    .brand svg{width:28px;height:28px}
+    .brand strong{font-weight:700}
+    .grow{flex:1}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);background:#121a26;color:var(--text);border-radius:10px;cursor:pointer;text-decoration:none}
+    .btn:hover{background:#152030}
+    .primary{background:linear-gradient(180deg,#10263a,#0f1e30);border-color:#1e3046}
+    .primary:hover{background:linear-gradient(180deg,#14324d,#14283f)}
+    .hero{padding:72px 0 28px;border-bottom:1px solid var(--border)}
+    .hero h1{font-size:38px;line-height:1.1;margin:0 0 12px}
+    .hero p{max-width:720px;color:var(--muted);margin:0}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:#0d141d;color:var(--muted);font-size:12px}
+    .section{padding:28px 0}
+    .grid{display:grid;gap:18px}
+    @media (min-width:900px){ .grid-2{grid-template-columns:1.1fr .9fr;} .grid-3{grid-template-columns:repeat(3,1fr);} }
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
+    h2{margin:0 0 12px;font-size:22px}
+    .mini{font-size:13px;color:var(--muted)}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;border:1px solid #273142;background:#0d141d}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+    details{background:#0c121a;border:1px solid #17202c;border-radius:12px;padding:12px}
+    pre{background:#0b1017;border:1px solid #17202c;border-radius:8px;padding:12px;overflow:auto}
+    footer{border-top:1px solid var(--border);padding:24px 0;color:var(--muted)}
+    .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
+    .drop.hover{background:#102338}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    #file{display:block;margin:8px auto 0}
+    .range{display:flex;gap:10px;align-items:center}
+    input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
+    .live{min-height:1.3em;margin-top:8px}
+  </style>
 </head>
 <body>
-  <header role="banner">
-    <div class="wrap nav" aria-label="Site header">
-      <a class="brand" href="#home" aria-label="Accessr Home">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-hidden="true">
-          <rect width="256" height="256" rx="48" fill="#0B1020"/>
-          <path fill="#3B82F6" d="M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z"/>
-          <circle cx="196" cy="92" r="10" fill="#10B981"/>
-        </svg>
-        <strong>Accessr</strong>
-      </a>
-      <div class="grow"></div>
-      <a class="btn" href="#tool">Launch tool</a>
-      <a class="btn" href="#faq">FAQ</a>
-      <a class="btn primary" href="#privacy">Privacy</a>
-    </div>
-  </header>
+  <header role="banner">
+    <div class="wrap nav" aria-label="Site header">
+      <a class="brand" href="#home" aria-label="Accessr Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-hidden="true">
+          <rect width="256" height="256" rx="48" fill="#0B1020"/>
+          <path fill="#3B82F6" d="M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z"/>
+          <circle cx="196" cy="92" r="10" fill="#10B981"/>
+        </svg>
+        <strong>Accessr</strong>
+      </a>
+      <div class="grow"></div>
+      <a class="btn" href="#tool">Launch tool</a>
+      <a class="btn" href="#faq">FAQ</a>
+      <a class="btn primary" href="#privacy">Privacy</a>
+    </div>
+  </header>
 
-  <section class="wrap hero" id="home">
-    <span class="chip">Free • Runs in your browser • No uploads</span>
-    <h1>Make your Word documents accessible — in minutes, not days.</h1>
-    <p>Upload a <strong>.docx</strong>, run checks, auto-fix common issues (headings, lists, alt text, table headers, language & font sizing), and download a cleaned file plus an audit report — all without your document ever leaving your device.</p>
-    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-      <a class="btn primary" href="#tool" aria-label="Jump to tool">Get started</a>
-      <a class="btn" href="#how">How it works</a>
-    </div>
-  </section>
+  <section class="wrap hero" id="home">
+    <span class="chip">Free • Runs in your browser • No uploads</span>
+    <h1>Make your Word documents accessible — in minutes, not days.</h1>
+    <p>Upload a <strong>.docx</strong>, run checks, auto-fix common issues (headings, lists, alt text, table headers, language & font sizing), and download a cleaned file plus an audit report — all without your document ever leaving your device.</p>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="#tool" aria-label="Jump to tool">Get started</a>
+      <a class="btn" href="#how">How it works</a>
+    </div>
+  </section>
 
-  <section class="wrap section grid grid-2" id="tool" aria-label="Accessibility tool">
-    <div class="card" aria-labelledby="upload-h">
-      <h2 id="upload-h">Check & Fix your .docx</h2>
-      <p class="mini">Built for government, business, higher-ed, and community groups. No signup. No servers.</p>
+  <section class="wrap section grid grid-2" id="tool" aria-label="Accessibility tool">
+    <div class="card" aria-labelledby="upload-h">
+      <h2 id="upload-h">Check & Fix your .docx</h2>
+      <p class="mini">Built for government, business, higher-ed, and community groups. No signup. No servers.</p>
 
-      <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
-        <p><strong>Drag & drop</strong> your file here, or</p>
-        <button id="chooseBtn" type="button" class="btn">Choose a file</button>
-        <input id="file" type="file" accept=".docx" />
-        <p class="mini" id="filename" aria-live="polite"></p>
-        <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
-          <label style="display:flex;gap:8px;align-items:center">
-            <input id="compat" type="checkbox" checked />
-            <span>Compatibility mode (preserve namespaces/root)</span>
-          </label>
-          <label class="mini" style="display:flex;gap:8px;align-items:center">
-            <input id="autoFix" type="checkbox" checked /> Apply safe auto-fixes
-          </label>
-        </div>
-        <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
-      </div>
+      <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
+        <p><strong>Drag & drop</strong> your file here, or</p>
+        <button id="chooseBtn" type="button" class="btn">Choose a file</button>
+        <input id="file" type="file" accept=".docx" />
+        <p class="mini" id="filename" aria-live="polite"></p>
+        <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
+          <label style="display:flex;gap:8px;align-items:center">
+            <input id="compat" type="checkbox" checked />
+            <span>Compatibility mode (preserve namespaces/root)</span>
+          </label>
+          <label class="mini" style="display:flex;gap:8px;align-items:center">
+            <input id="autoFix" type="checkbox" checked /> Apply safe auto-fixes
+          </label>
+        </div>
+        <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
+      </div>
 
-      <div class="controls" role="group" aria-label="Options">
-        <div class="range">
-          <label for="lang" class="mini">Language</label>
-          <select id="lang" aria-label="Default language for runs">
-            <option value="en-AU">English (Australia)</option>
-            <option value="en-GB">English (UK)</option>
-            <option value="en-US">English (US)</option>
-          </select>
-        </div>
-        <div class="range">
-          <label for="minFont" class="mini">Min font (pt)</label>
-          <input id="minFont" type="number" min="10" max="16" step="1" value="11" />
-        </div>
-      </div>
+      <div class="controls" role="group" aria-label="Options">
+        <div class="range">
+          <label for="lang" class="mini">Language</label>
+          <select id="lang" aria-label="Default language for runs">
+            <option value="en-AU">English (Australia)</option>
+            <option value="en-GB">English (UK)</option>
+            <option value="en-US">English (US)</option>
+          </select>
+        </div>
+        <div class="range">
+          <label for="minFont" class="mini">Min font (pt)</label>
+          <input id="minFont" type="number" min="10" max="16" step="1" value="11" />
+        </div>
+      </div>
 
-      <div class="controls">
-        <button id="runBtn" class="btn primary" disabled aria-disabled="true">Run checks</button>
-        <a id="dlFixed" class="btn" style="display:none" download>Download fixed .docx</a>
-        <a id="dlReport" class="btn" style="display:none" download>Download report.md</a>
-      </div>
-      <div id="status" class="live" aria-live="polite"></div>
+      <div class="controls">
+        <button id="runBtn" class="btn primary" disabled aria-disabled="true">Run checks</button>
+        <a id="dlFixed" class="btn" style="display:none" download>Download fixed .docx</a>
+        <a id="dlReport" class="btn" style="display:none" download>Download report.md</a>
+      </div>
+      <div id="status" class="live" aria-live="polite"></div>
 
-            <div id="diag" class="mini" style="margin-top:10px; border:1px solid #1b2430; border-radius:10px; padding:10px; background:#0c121a; display:none">
-        <div><strong>Diagnostics</strong></div>
-        <div id="diagLib">• Libraries: <em>checking…</em></div>
-        <div id="diagFile">• File: <em>none selected</em></div>
-        <div id="diagReady">• Ready: <em>no</em></div>
-        <div id="diagErr" style="color:#ff6b6b; margin-top:6px;"></div>
-      </div>
-    </div>
+      <!-- Diagnostics -->
+      <div id="diag" class="mini" style="margin-top:10px; border:1px solid #1b2430; border-radius:10px; padding:10px; background:#0c121a; display:none">
+        <div><strong>Diagnostics</strong></div>
+        <div id="diagLib">• Libraries: <em>checking…</em></div>
+        <div id="diagFile">• File: <em>none selected</em></div>
+        <div id="diagReady">• Ready: <em>no</em></div>
+        <div id="diagErr" style="color:#ff6b6b; margin-top:6px;"></div>
+      </div>
+    </div>
 
-    <div class="card" aria-labelledby="results-h">
-      <h2 id="results-h">Results</h2>
-      <div id="summary" class="mini" style="margin-bottom:8px"></div>
-      <details>
-        <summary>Show raw report (Markdown)</summary>
-        <pre id="rawReport"></pre>
-      </details>
-      <div style="margin-top:12px">
-        <span class="pill"><span class="ok">✅</span> Fixed</span>
-        <span class="pill"><span class="warn">•</span> Needs review</span>
-      </div>
-    </div>
-  </section>
+    <div class="card" aria-labelledby="results-h">
+      <h2 id="results-h">Results</h2>
+      <div id="summary" class="mini" style="margin-bottom:8px"></div>
+      <details>
+        <summary>Show raw report (Markdown)</summary>
+        <pre id="rawReport"></pre>
+      </details>
+      <div style="margin-top:12px">
+        <span class="pill"><span class="ok">✅</span> Fixed</span>
+        <span class="pill"><span class="warn">•</span> Needs review</span>
+      </div>
+    </div>
+  </section>
 
-    <script>
-    (function(){
-      var chooseBtn = document.getElementById('chooseBtn');
-      var fileInput = document.getElementById('file');
-      var filenameEl = document.getElementById('filename');
-      var runBtn = document.getElementById('runBtn');
-      var debugEl = document.getElementById('debug');
-      var diagWrap  = document.getElementById('diag');
-      var diagFile  = document.getElementById('diagFile');
-      var diagReady = document.getElementById('diagReady');
+  <!-- Early safety wiring + EARLY PICK SYNC -->
+  <script>
+    (function(){
+      var chooseBtn = document.getElementById('chooseBtn');
+      var fileInput = document.getElementById('file');
+      var filenameEl = document.getElementById('filename');
+      var runBtn = document.getElementById('runBtn');
+      var debugEl = document.getElementById('debug');
+      var diagWrap  = document.getElementById('diag');
+      var diagFile  = document.getElementById('diagFile');
+      var diagReady = document.getElementById('diagReady');
 
-      function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
-      function setDiagFile(text){ if(diagWrap) diagWrap.style.display='block'; if(diagFile) diagFile.innerHTML='• File: ' + text; }
-      function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
+      function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
+      function setDiagFile(text){ if(diagWrap) diagWrap.style.display='block'; if(diagFile) diagFile.innerHTML='• File: ' + text; }
+      function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
 
-      function onPick(f){
-        window.__accessrSelectedFile = f || null; // share with main app
-        if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
-        if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
-        if (f){
-          dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
-          setDiagFile('<span style="color:#34d399">' + f.name + '</span> (' + (f.type||'') + ', ' + (f.size||0) + ' bytes)');
-          setDiagReady(true);
-        } else {
-          setDiagFile('<em>none selected</em>');
-          setDiagReady(false);
-        }
-      }
+      function onPick(f){
+        window.__accessrSelectedFile = f || null; // share with main app
+        if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
+        if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
+        if (f){
+          dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
+          setDiagFile('<span style="color:#34d399">' + f.name + '</span> (' + (f.type||'') + ', ' + (f.size||0) + ' bytes)');
+          setDiagReady(true);
+        } else {
+          setDiagFile('<em>none selected</em>');
+          setDiagReady(false);
+        }
+      }
 
-      if (chooseBtn && fileInput){
-        chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
-        fileInput.addEventListener('change', function(){
-          var f = (fileInput.files && fileInput.files[0]) || null;
-          onPick(f);
-        });
-      }
-    })();
-  </script>
+      if (chooseBtn && fileInput){
+        chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
+        fileInput.addEventListener('change', function(){
+          var f = (fileInput.files && fileInput.files[0]) || null;
+          onPick(f);
+        });
+      }
+    })();
+  </script>
 
-    <script src="./vendor/jszip.min.js"></script>
-  <script src="./vendor/fxp.min.js"></script>
-  <script src="./vendor/FileSaver.min.js"></script>
-  <script>
-    (function(){
-      var ok = !!window.JSZip && !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder) && !!window.saveAs;
-      var diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
-      if (diag) diag.style.display = 'block';
-      if (diagLib) {
-        diagLib.innerHTML = ok
-          ? '• Libraries: <span style="color:#34d399">OK (local)</span>'
-          : '• Libraries: <span style="color:#ff6b6b">Missing /vendor files (jszip.min.js, fxp.min.js, FileSaver.min.js)</span>';
-      }
-      window.__XMLParserCtor = ok ? window.fxp.XMLParser : null;
-      window.__XMLBuilderCtor = ok ? window.fxp.XMLBuilder : null;
-    })();
-  </script>
+  <!-- Local libraries -->
+  <script src="./vendor/jszip.min.js"></script>
+  <script src="./vendor/fxp.min.js"></script>
+  <script src="./vendor/FileSaver.min.js"></script>
+  <script>
+    (function(){
+      var ok = !!window.JSZip && !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder) && !!window.saveAs;
+      var diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
+      if (diag) diag.style.display = 'block';
+      if (diagLib) {
+        diagLib.innerHTML = ok
+          ? '• Libraries: <span style="color:#34d399">OK (local)</span>'
+          : '• Libraries: <span style="color:#ff6b6b">Missing /vendor files (jszip.min.js, fxp.min.js, FileSaver.min.js)</span>';
+      }
+      window.__XMLParserCtor = ok ? window.fxp.XMLParser : null;
+      window.__XMLBuilderCtor = ok ? window.fxp.XMLBuilder : null;
+    })();
+  </script>
 
-    <script>
-    document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
+  <!-- App -->
+  <script>
+    document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
 
-    // --- Helpers ---
-    function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
-    function getRuns(p){ return ensureArray(p && p.r); }
-    function pStyleName(p){ if(!p || !p.pPr) return undefined; var s = p.pPr.pStyle; return (typeof s==='object'&&s.val!=null)?s.val:s; }
-    function setPStyle(p, name){ p.pPr = p.pPr || {}; p.pPr.pStyle = { val:name }; }
-    function halfPoints(pt){ return Math.round(pt*2); }
-    function isFakeHeading(txt){
-      var t=(txt||'').trim(); if(t.length<4) return false;
-      return /^[A-Z0-9][A-Z0-9\s\-:&]{3,}$/.test(t) || /^\d+(?:\.\d+)*\s+.+$/.test(t) || /^(Appendix|Annex|Section)\s+\w+/i.test(t);
-    }
-    function getTextFromParagraph(p){
-      var s=''; var runs=getRuns(p);
-      for(var i=0;i<runs.length;i++){ var r=runs[i], t=r && r.t; if(typeof t==='string') s+=t; else if(t && t['#text']) s+=t['#text']; }
-      return s.trim();
-    }
-    function enforceRunSize(r, minPt){
-      r.rPr = r.rPr || {}; var sz=(r.rPr.sz && r.rPr.sz.val!=null)?r.rPr.sz.val:r.rPr.sz;
-      if (sz!=null){ var n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minPt)){ r.rPr.sz={val:halfPoints(minPt)}; return true; } }
-      return false;
-    }
-    function ensureRunLang(r, lang){
-      r.rPr = r.rPr || {}; var lg=r.rPr.lang; var has=lg && (lg.val||lg.eastAsia||lg.bidi);
-      if(!has){ r.rPr.lang={ val:lang, eastAsia:lang, bidi:lang }; return true; } return false;
-    }
-    function stripFakeBullet(p){
-      var runs=getRuns(p); if(!runs.length) return false;
-      var r0=runs[0], t=r0.t, s=''; if(typeof t==='string') s=t; else if(t && t['#text']) s=t['#text'];
-      var stripped = s.replace(/^(-|\*|•)\s+/, ''); if(stripped!==s){ if(typeof t==='string') r0.t=stripped; else r0.t={'#text':stripped}; return true; }
-      return false;
-    }
-    function isProbableHeaderRow(row){
-      var cells=ensureArray(row && row.tc), hits=0;
-      for(var i=0;i<cells.length;i++){
-        var c=cells[i], paras=ensureArray(c && c.p), txt='';
-        for(var j=0;j<paras.length;j++) txt += (getTextFromParagraph(paras[j]) + ' ');
-        txt=txt.trim(); if(!txt) continue;
-        if(txt.length<=25) hits++; if(/^[A-Z\s0-9]+$/.test(txt)) hits++; if(/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/.test(txt)) hits++;
-      }
-      return hits >= Math.max(1, Math.floor(cells.length/2));
-    }
-    function setTableHeaderRow(tbl){
-      var rows=ensureArray(tbl && tbl.tr); if(!rows.length) return false;
-      var first=rows[0]; first.trPr = first.trPr || {}; first.trPr.tblHeader = { val:true }; return true;
-    }
+    // --- Helpers ---
+    function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
+    function getRuns(p){ return ensureArray(p && p.r); }
+    function pStyleName(p){ if(!p || !p.pPr) return undefined; var s = p.pPr.pStyle; return (typeof s==='object'&&s.val!=null)?s.val:s; }
+    function setPStyle(p, name){ p.pPr = p.pPr || {}; p.pPr.pStyle = { val:name }; }
+    function halfPoints(pt){ return Math.round(pt*2); }
+    function isFakeHeading(txt){
+      var t=(txt||'').trim(); if(t.length<4) return false;
+      return /^[A-Z0-9][A-Z0-9\s\-:&]{3,}$/.test(t) || /^\d+(?:\.\d+)*\s+.+$/.test(t) || /^(Appendix|Annex|Section)\s+\w+/i.test(t);
+    }
+    function getTextFromParagraph(p){
+      var s=''; var runs=getRuns(p);
+      for(var i=0;i<runs.length;i++){ var r=runs[i], t=r && r.t; if(typeof t==='string') s+=t; else if(t && t['#text']) s+=t['#text']; }
+      return s.trim();
+    }
+    function enforceRunSize(r, minPt){
+      r.rPr = r.rPr || {}; var sz=(r.rPr.sz && r.rPr.sz.val!=null)?r.rPr.sz.val:r.rPr.sz;
+      if (sz!=null){ var n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minPt)){ r.rPr.sz={val:halfPoints(minPt)}; return true; } }
+      return false;
+    }
+    function ensureRunLang(r, lang){
+      r.rPr = r.rPr || {}; var lg=r.rPr.lang; var has=lg && (lg.val||lg.eastAsia||lg.bidi);
+      if(!has){ r.rPr.lang={ val:lang, eastAsia:lang, bidi:lang }; return true; } return false;
+    }
+    function stripFakeBullet(p){
+      var runs=getRuns(p); if(!runs.length) return false;
+      var r0=runs[0], t=r0.t, s=''; if(typeof t==='string') s=t; else if(t && t['#text']) s=t['#text'];
+      var stripped = s.replace(/^(-|\*|•)\s+/, ''); if(stripped!==s){ if(typeof t==='string') r0.t=stripped; else r0.t={'#text':stripped}; return true; }
+      return false;
+    }
+    function isProbableHeaderRow(row){
+      var cells=ensureArray(row && row.tc), hits=0;
+      for(var i=0;i<cells.length;i++){
+        var c=cells[i], paras=ensureArray(c && c.p), txt='';
+        for(var j=0;j<paras.length;j++) txt += (getTextFromParagraph(paras[j]) + ' ');
+        txt=txt.trim(); if(!txt) continue;
+        if(txt.length<=25) hits++; if(/^[A-Z\s0-9]+$/.test(txt)) hits++; if(/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/.test(txt)) hits++;
+      }
+      return hits >= Math.max(1, Math.floor(cells.length/2));
+    }
+    function setTableHeaderRow(tbl){
+      var rows=ensureArray(tbl && tbl.tr); if(!rows.length) return false;
+      var first=rows[0]; first.trPr = first.trPr || {}; first.trPr.tblHeader = { val:true }; return true;
+    }
 
-    function makeReport(file){
-      return {
-        file, issues: [],
-        add(code, message, location, fix, details){ this.issues.push({ code, message, location, fix_applied:!!fix, details:details||{} }); },
-        toMarkdown(){
-          if(!this.issues.length) return '# Accessibility Report for `'+this.file+'`\n\n🎉 No issues found.\n';
-          var out=['# Accessibility Report for `'+this.file+'`',''];
-          for(var i=0;i<this.issues.length;i++){
-            var it=this.issues[i], line='- **['+it.code+']** '+it.message+' — *'+it.location+'* ('+(it.fix_applied?'✅ fixed':'⚠ needs review')+')';
-            if(it.details && Object.keys(it.details).length) line+='\n  - details: `'+JSON.stringify(it.details)+'`';
-            out.push(line);
-          }
-          return out.join('\n');
-        },
-        counts(){ var t=this.issues.length,f=0; for(var i=0;i<t;i++) if(this.issues[i].fix_applied) f++; return { total:t,fixed:f,flagged:t-f }; }
-      };
-    }
+    function makeReport(file){
+      return {
+        file, issues: [],
+        add(code, message, location, fix, details){ this.issues.push({ code, message, location, fix_applied:!!fix, details:details||{} }); },
+        toMarkdown(){
+          if(!this.issues.length) return '# Accessibility Report for `'+this.file+'`\n\n🎉 No issues found.\n';
+          var out=['# Accessibility Report for `'+this.file+'`',''];
+          for(var i=0;i<this.issues.length;i++){
+            var it=this.issues[i], line='- **['+it.code+']** '+it.message+' — *'+it.location+'* ('+(it.fix_applied?'✅ fixed':'⚠ needs review')+')';
+            if(it.details && Object.keys(it.details).length) line+='\n  - details: `'+JSON.stringify(it.details)+'`';
+            out.push(line);
+          }
+          return out.join('\n');
+        },
+        counts(){ var t=this.issues.length,f=0; for(var i=0;i<t;i++) if(this.issues[i].fix_applied) f++; return { total:t,fixed:f,flagged:t-f }; }
+      };
+    }
 
-    var parser=null, builder=null;
+    var parser=null, builder=null;
 
-    // Keep original raw XML per part for root-tag graft
-    var __rawXmlByPart = Object.create(null);
+    // Keep original raw XML per part for root-tag graft
+    var __rawXmlByPart = Object.create(null);
 
-    async function readXml(zip, name){
-      var xml = await zip.files[name].async('string');
-      __rawXmlByPart[name] = xml;
-      return parser.parse(xml);
-    }
+    async function readXml(zip, name){
+      var xml = await zip.files[name].async('string');
+      __rawXmlByPart[name] = xml;
+      return parser.parse(xml);
+    }
 
-    // Graft original root start-tag (keeps xmlns & prefixes)
-    function graftRootTag(originalXml, rebuiltXml){
-      if(!originalXml || !rebuiltXml) return rebuiltXml;
-      // FIXED REGEX: removed the stray ')'
-      var origOpen = originalXml.match(/<\?xml[^>]*>\s*?<(?:\w+:)?\w+[^>]*>/); 
-      var newOpen  = rebuiltXml.match(/<\?xml[^>]*>\s*?<(?:\w+:)?\w+[^>]*>/); 
-      if(!newOpen || !origOpen) return rebuiltXml;
-      return rebuiltXml.replace(newOpen[0], origOpen[0]);
-    }
+    // Graft original root start-tag (keeps xmlns & prefixes)
+    function graftRootTag(originalXml, rebuiltXml){
+      if(!originalXml || !rebuiltXml) return rebuiltXml;
+      var origOpen = originalXml.match(/<\?xml[^>]*>\s*)?<(?:\w+:)?\w+[^>]*>/);
+      var newOpen  = rebuiltXml.match(/<\?xml[^>]*>\s*)?<(?:\w+:)?\w+[^>]*>/);
+      if(!newOpen || !origOpen) return rebuiltXml;
+      return rebuiltXml.replace(newOpen[0], origOpen[0]);
+    }
 
-    function writeXml(zip, name, obj, opts){
-      var xmlStr = builder
+    function writeXml(zip, name, obj, opts){
+      var xmlStr = builder.build(obj);
+      if (!xmlStr.startsWith('<?xml')) {
+        xmlStr = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + xmlStr;
+      }
+      if (opts && opts.compat && __rawXmlByPart[name]) {
+        xmlStr = graftRootTag(__rawXmlByPart[name], xmlStr);
+      }
+      zip.file(name, xmlStr);
+    }
+
+    function listWordXmlParts(zip){
+      var out=[], names=Object.keys(zip.files);
+      for(var i=0;i<names.length;i++){
+        var n=names[i];
+        if(/^word\/document\.xml$/.test(n)) out.push(n);
+        if(/^word\/header\d+\.xml$/.test(n)) out.push(n);
+        if(/^word\/footer\d+\.xml$/.test(n)) out.push(n);
+      }
+      return out;
+    }
+
+    function processDocPart(docObj, report, opts){
+      var minFontPt=opts.minFontPt, lang=opts.lang, applyFixes=opts.applyFixes;
+      var documentNode=docObj.document; if(!documentNode || !documentNode.body) return;
+
+      var body=documentNode.body, blocks=[]; var keys=Object.keys(body);
+      for(var ki=0;ki<keys.length;ki++){ var k=keys[ki], arr=ensureArray(body[k]); for(var ai=0;ai<arr.length;ai++) blocks.push({type:k,node:arr[ai]}); }
+
+      var lastH=0;
+      for (var i=0;i<blocks.length;i++){
+        var blk=blocks[i]; if(blk.type!=='p') continue;
+        var p=blk.node, style=pStyleName(p)||'', txt=getTextFromParagraph(p);
+        if(/^Heading\s*([1-9])$/i.test(style)){
+          var lvl=Number(style.replace(/[^\d]/g,''))||1; if(lastH && (lvl-lastH)>1) report.add('H-LEVEL-SKIP','Skipped heading level from H'+lastH+' to H'+lvl,'Paragraph '+(i+1)); lastH=lvl;
+        } else if(isFakeHeading(txt)){
+          report.add('H-FAKE','Looks like a heading but is not using a Heading style.','Paragraph '+(i+1),false,{text:txt});
+          if(applyFixes){ setPStyle(p,'Heading 2'); report.add('H-FAKE->FIX','Converted fake heading to "Heading 2".','Paragraph '+(i+1),true,{text:txt}); }
+        }
+      }
+
+      var paragraphs=[]; for(var bi=0;bi<blocks.length;bi++) if(blocks[bi].type==='p') paragraphs.push(blocks[bi].node);
+      var totalImg=0, missingAlt=0, altFixed=0;
+
+      for (var pi=0;pi<paragraphs.length;pi++){
+        var pp=paragraphs[pi]; var tooSmall=false, sizeFixed=false, langFixed=false;
+        var runs=getRuns(pp);
+        for(var ri=0;ri<runs.length;ri++){
+          var r=runs[ri], rPr=r.rPr||{}, sz=(rPr.sz&&rPr.sz.val!=null)?rPr.sz.val:rPr.sz;
+          if(sz!=null){ var n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minFontPt)){ tooSmall=true; if(applyFixes){ if(enforceRunSize(r,minFontPt)) sizeFixed=true; } } }
+          if(applyFixes){ if(ensureRunLang(r, lang)) langFixed=true; }
+          var drawing=r.drawing; if(drawing){
+            var list=[], inl=drawing.inline, anc=drawing.anchor;
+            if(Array.isArray(inl)){ for(var a=0;a<inl.length;a++) if(inl[a]) list.push(inl[a]); } else if(inl) list.push(inl);
+            if(Array.isArray(anc)){ for(var b=0;b<anc.length;b++) if(anc[b]) list.push(anc[b]); } else if(anc) list.push(anc);
+            for(var di=0;di<list.length;di++){ var d=list[di]; if(!d || !d.docPr) continue; totalImg++; var has = d.docPr.descr && (''+d.docPr.descr).trim()!==''; if(!has){ missingAlt++; if(applyFixes){ d.docPr.descr='IMAGE – add descriptive alt text'; altFixed++; } } }
+          }
+        }
+        if(tooSmall) report.add('TXT-SIZE','Text under '+minFontPt+'pt detected.','Paragraph '+(pi+1));
+        if(sizeFixed) report.add('TXT-SIZE->FIX','Raised font size to '+minFontPt+'pt.','Paragraph '+(pi+1),true);
+        if(langFixed) report.add('DOC-LANG->FIX','Set language to '+lang+' on missing runs.','Paragraph '+(pi+1),true);
+
+        var t=getTextFromParagraph(pp);
+        if(/https?:\/\/\S+/.test(t)) report.add('LINK-RAW','Raw URL found; consider descriptive link text.','Paragraph '+(pi+1),false,{text:t});
+
+        if(/^(-|\*|•)\s+\S+/.test(t)){
+          var hasNumPr=!!(pp && pp.pPr && pp.pPr.numPr); var styleName=(pStyleName(pp)||'').toLowerCase(); var isList=styleName.indexOf('list')>-1;
+          if(!hasNumPr && !isList){ report.add('LIST-FAKE','Paragraph looks like a fake bullet; convert to a real list style.','Paragraph '+(pi+1),false,{text:t});
+            if(applyFixes){ stripFakeBullet(pp); setPStyle(pp,'ListParagraph'); report.add('LIST-FAKE->FIX','Converted fake bullet to a list paragraph style.','Paragraph '+(pi+1),true); } }
+        }
+      }
+
+      if(totalImg>0 && missingAlt>0){
+        report.add('IMG-ALT', missingAlt+' of '+totalImg+' images missing alt text.','Document');
+        if(applyFixes && altFixed>0) report.add('IMG-ALT->FIX','Added placeholder alt text to '+altFixed+' image(s).','Document',true);
+      }
+
+      var tables=[]; for(var ti=0;ti<blocks.length;ti++) if(blocks[ti].type==='tbl') tables.push(blocks[ti].node);
+      for (var j=0;j<tables.length;j++){
+        var tbl=tables[j], rows=ensureArray(tbl && tbl.tr); if(!rows.length) continue;
+        var first=rows[0], already=!!(first && first.trPr && first.trPr.tblHeader);
+        if(!already && isProbableHeaderRow(first)){ report.add('TBL-HEADER','Table likely needs first row marked as header.','Table '+(j+1));
+          if(applyFixes){ if(setTableHeaderRow(tbl)) report.add('TBL-HEADER->FIX','Marked first row as a repeating header.','Table '+(j+1),true); } }
+      }
+
+      var hadLang=false;
+      outer: for(var ppi=0;ppi<paragraphs.length;ppi++){
+        var rr=getRuns(paragraphs[ppi]);
+        for(var rri=0;rri<rr.length;rri++){ var lg=rr[rri] && rr[rri].rPr && rr[rri].rPr.lang; if(lg && (lg.val||lg.eastAsia||lg.bidi)){ hadLang=true; break outer; } }
+      }
+      if(!hadLang) report.add('DOC-LANG','No document language detected; set a default (e.g., en-AU).','Document');
+    }
+
+    async function processFile(file, opts){
+      var buffer = await file.arrayBuffer();
+      var zip = await JSZip.loadAsync(buffer);
+      var parts = listWordXmlParts(zip);
+      if(!parts.length) throw new Error('No Word XML parts found in document.');
+      var report = makeReport(file.name);
+
+      for (var i=0;i<parts.length;i++){
+        var name=parts[i];
+        var js = await readXml(zip, name);
+        processDocPart(js, report, opts);
+        if(opts.applyFixes) writeXml(zip, name, js, { compat: opts.compat });
+      }
+
+      var fixedBlob = null;
+      if(opts.applyFixes){
+        var content = await zip.generateAsync({ type:'blob' });
+        fixedBlob = new Blob([content], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      }
+      var md = report.toMarkdown();
+      var reportBlob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      return { report, fixedBlob, reportBlob };
+    }
+
+    // ---------- UI + Diagnostics ----------
+    (function(){
+      var drop=document.getElementById('drop');
+      var fileInput=document.getElementById('file');
+      var chooseBtn=document.getElementById('chooseBtn');
+      var runBtn=document.getElementById('runBtn');
+      var dlFixed=document.getElementById('dlFixed');
+      var dlReport=document.getElementById('dlReport');
+      var rawReport=document.getElementById('rawReport');
+      var statusEl=document.getElementById('status');
+      var filename=document.getElementById('filename');
+      var summary=document.getElementById('summary');
+      var langSel=document.getElementById('lang');
+      var minFont=document.getElementById('minFont');
+      var autoFix=document.getElementById('autoFix');
+      var compat=document.getElementById('compat');
+      var debugEl=document.getElementById('debug');
+
+      var diagWrap=document.getElementById('diag');
+      var diagLib=document.getElementById('diagLib');
+      var diagFile=document.getElementById('diagFile');
+      var diagReady=document.getElementById('diagReady');
+      var diagErr=document.getElementById('diagErr');
+
+      var currentFile=null;
+
+      function showDiag(){ if(diagWrap) diagWrap.style.display='block'; }
+      function setDiagLib(ok,msg){ showDiag(); if(!diagLib) return; diagLib.innerHTML='• Libraries: '+(ok?'<span style="color:#34d399">OK (local)</span>':'<span style="color:#ff6b6b">Missing</span>')+(msg?' — '+msg:''); }
+      function setDiagFile(text){ showDiag(); if(diagFile) diagFile.innerHTML='• File: '+text; }
+      function setDiagReady(ok){ showDiag(); if(diagReady) diagReady.innerHTML='• Ready: '+(ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
+      function setDiagErr(text){ showDiag(); if(diagErr) diagErr.textContent=text||''; }
+      function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
+
+      function looksLikeDocx(f){ if(!f) return false; var nameOk=/\.docx$/i.test(f.name||''); var mimeOk=(f.type||'').indexOf('officedocument.wordprocessingml.document')!==-1; return nameOk || mimeOk; }
+
+      function setFile(f){
+        currentFile=f;
+        runBtn.disabled=!currentFile;
+        runBtn.setAttribute('aria-disabled', String(!currentFile));
+        filename.textContent=currentFile?('Selected file: '+currentFile.name):'';
+        statusEl.textContent=currentFile?'Ready to process.':'';
+        dlFixed.style.display='none'; dlReport.style.display='none';
+        rawReport.textContent=''; summary.textContent='';
+        setDiagFile(currentFile?('<span style="color:#34d399">'+currentFile.name+'</span> ('+(currentFile.type||'')+', '+(currentFile.size||0)+' bytes)'):'<em>none selected</em>');
+        setDiagReady(!!currentFile);
+      }
+
+      // ADOPT EARLY PICK (if selected before libs/UI wired)
+      (function adoptEarlyPick(){
+        var early = window.__accessrSelectedFile;
+        var fi = document.getElementById('file');
+        var f = early || (fi && fi.files && fi.files[0]) || null;
+        if (f) setFile(f);
+      })();
+
+      setDiagLib(!!window.JSZip && !!(window.__XMLParserCtor && window.__XMLBuilderCtor), '(startup)');
+
+      if (chooseBtn && fileInput) chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
+      fileInput.addEventListener('change', function(){
+        var f=(fileInput.files && fileInput.files[0])||null;
+        if(!f){ setFile(null); dbg('No file selected.'); return; }
+        dbg('Picked: '+(f.name||'(no name)')+' • type='+(f.type||'(blank)')+' • size='+(f.size||0)+' bytes');
+        if(!looksLikeDocx(f)){ setFile(null); statusEl.innerHTML="<span class='err'>Please choose a Microsoft Word (.docx) file.</span>"; return; }
+        setFile(f);
+      });
+      ['dragenter','dragover'].forEach(function(evt){ drop.addEventListener(evt, function(e){ e.preventDefault(); e.stopPropagation(); drop.classList.add('hover'); }); });
+      ['dragleave','drop'].forEach(function(evt){ drop.addEventListener(evt, function(e){ e.preventDefault(); e.stopPropagation(); drop.classList.remove('hover'); }); });
+      drop.addEventListener('drop', function(e){
+        var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if(!f){ dbg('Drop had no file.'); return; }
+        dbg('Dropped: '+(f.name||'(no name)')+' • type='+(f.type||'(blank)')+' • size='+(f.size||0));
+        if(!looksLikeDocx(f)){ statusEl.innerHTML="<span class='err'>Please drop a Word (.docx) file.</span>"; return; }
+        setFile(f);
+      });
+      drop.addEventListener('click', function(){ fileInput.click(); });
+      drop.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fileInput.click(); } });
+
+      window.addEventListener('error', function(e){ setDiagErr('Script error: '+(e.message||'')); });
+      window.addEventListener('unhandledrejection', function(e){ setDiagErr('Unhandled promise: '+(e.reason && e.reason.message ? e.reason.message : String(e.reason || ''))); });
+
+      runBtn.addEventListener('click', async function(){
+        setDiagErr('');
+        if(!currentFile){ statusEl.innerHTML="<span class='err'>No file selected.</span>"; return; }
+
+        var XMLParserCtor=window.__XMLParserCtor, XMLBuilderCtor=window.__XMLBuilderCtor;
+        if(!window.JSZip || !XMLParserCtor || !XMLBuilderCtor){
+          setDiagLib(false,'(missing local /vendor files)');
+          setDiagErr('Local libraries not found. Ensure /vendor/jszip.min.js, /vendor/fxp.min.js, /vendor/FileSaver.min.js exist.');
+          statusEl.innerHTML="<span class='err'>Libraries missing. See Diagnostics.</span>";
+          return;
+        }
+        setDiagLib(true,'(local)');
+
+        var compatOn = !!(compat && compat.checked);
+        parser = new XMLParserCtor({
+          ignoreAttributes:false,
+          attributeNamePrefix:'',
+          removeNSPrefix: !compatOn ? true : false
+        });
+        builder = new XMLBuilderCtor({
+          ignoreAttributes:false,
+          attributeNamePrefix:'',
+          format:true
+        });
+
+        runBtn.disabled=true; runBtn.setAttribute('aria-disabled','true');
+        statusEl.textContent='Processing… (all on your device)';
+        dlFixed.style.display='none'; dlReport.style.display='none';
+        rawReport.textContent=''; summary.textContent='';
+
+        try{
+          var opts = {
+            minFontPt: Number(minFont.value || 11),
+            lang: (document.getElementById('lang').value || 'en-AU'),
+            applyFixes: !!(autoFix && autoFix.checked),
+            compat: compatOn
+          };
+          var result=await processFile(currentFile, opts);
+          var report=result.report, fixedBlob=result.fixedBlob, reportBlob=result.reportBlob;
+
+          var counts=report.counts();
+          summary.innerHTML =
+            '<span class="pill"><span class="warn">⚠</span> Total: '+counts.total+'</span> '+
+            '<span class="pill"><span class="ok">✅</span> Fixed: '+counts.fixed+'</span> '+
+            '<span class="pill"><span class="warn">•</span> Needs review: '+counts.flagged+'</span>';
+
+          rawReport.textContent=report.toMarkdown();
+
+          var ts=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+          var base=currentFile.name.replace(/\.docx$/i,'')||'document';
+
+          if(reportBlob){
+            var url1=URL.createObjectURL(reportBlob);
+            dlReport.href=url1; dlReport.download=base+'.a11y-report-'+ts+'.md'; dlReport.style.display='inline-flex';
+          }
+          if(fixedBlob && opts.applyFixes){
+            var url2=URL.createObjectURL(fixedBlob);
+            dlFixed.href=url2; dlFixed.download=base+'.fixed-'+ts+'.docx'; dlFixed.style.display='inline-flex';
+          }
+
+          statusEl.textContent=opts.applyFixes ? 'Done. Download your fixed document and report below.' : 'Done. Download your report below.';
+        }catch(err){
+          console.error(err);
+          setDiagErr(err && err.message ? err.message : String(err));
+          statusEl.innerHTML="<span class='err'>Error:</span> "+(err && err.message ? err.message : String(err));
+        }finally{
+          runBtn.disabled=!currentFile; runBtn.setAttribute('aria-disabled', String(!currentFile));
+        }
+      });
+    })();
+  </script>
+
+  <footer role="contentinfo">
+    <div class="wrap">
+      <div>© <span id="year"></span> Accessr</div>
+      <div class="mini">Free, client-side accessibility checker for Word documents.</div>
+    </div>
+  </footer>
+</body>
+</html>
