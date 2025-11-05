@@ -193,9 +193,16 @@
   <script src="./vendor/jszip.min.js"></script>
   <script src="./vendor/fxp.min.js"></script>
   <script src="./vendor/FileSaver.min.js"></script>
+  <!-- Normalize constructors & show Diagnostics -->
   <script>
     (function(){
-      var ok = !!window.JSZip && !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder) && !!window.saveAs;
+      var hasFxpNS = !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder);
+      var hasGlobal = !!(window.XMLParser && window.XMLBuilder);
+      var ok = !!window.JSZip && !!(hasFxpNS || hasGlobal) && !!window.saveAs;
+
+      window.__XMLParserCtor  = hasFxpNS ? window.fxp.XMLParser  : (hasGlobal ? window.XMLParser  : null);
+      window.__XMLBuilderCtor = hasFxpNS ? window.fxp.XMLBuilder : (hasGlobal ? window.XMLBuilder : null);
+
       var diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
       if (diag) diag.style.display = 'block';
       if (diagLib) {
@@ -203,8 +210,6 @@
           ? '• Libraries: <span style="color:#34d399">OK (local)</span>'
           : '• Libraries: <span style="color:#ff6b6b">Missing /vendor files (jszip.min.js, fxp.min.js, FileSaver.min.js)</span>';
       }
-      window.__XMLParserCtor = ok ? window.fxp.XMLParser : null;
-      window.__XMLBuilderCtor = ok ? window.fxp.XMLBuilder : null;
     })();
   </script>
 
@@ -286,13 +291,25 @@
       return parser.parse(xml);
     }
 
-    // Graft original root start-tag (keeps xmlns & prefixes)
+    // SAFE root-tag graft (no fragile regex)
     function graftRootTag(originalXml, rebuiltXml){
-      if(!originalXml || !rebuiltXml) return rebuiltXml;
-      var origOpen = originalXml.match(/<\?xml[^>]*>\s*)?<(?:\w+:)?\w+[^>]*>/);
-      var newOpen  = rebuiltXml.match(/<\?xml[^>]*>\s*)?<(?:\w+:)?\w+[^>]*>/);
-      if(!newOpen || !origOpen) return rebuiltXml;
-      return rebuiltXml.replace(newOpen[0], origOpen[0]);
+      function firstStartTag(xml){
+        let i = xml.indexOf('<');
+        if (i < 0) return null;
+        if (xml.slice(i, i+5).toLowerCase() === '<?xml'){
+          const q = xml.indexOf('?>', i);
+          if (q < 0) return null;
+          i = xml.indexOf('<', q + 2);
+          if (i < 0) return null;
+        }
+        const j = xml.indexOf('>', i);
+        if (j < 0) return null;
+        return { start: i, end: j + 1, text: xml.slice(i, j + 1) };
+        }
+      const orig = firstStartTag(originalXml);
+      const newer = firstStartTag(rebuiltXml);
+      if (!orig || !newer) return rebuiltXml;
+      return rebuiltXml.slice(0, newer.start) + orig.text + rebuiltXml.slice(newer.end);
     }
 
     function writeXml(zip, name, obj, opts){
@@ -459,7 +476,7 @@
         setDiagReady(!!currentFile);
       }
 
-      // ADOPT EARLY PICK (if selected before libs/UI wired)
+      // Adopt any early pick (before libs/UI finished)
       (function adoptEarlyPick(){
         var early = window.__accessrSelectedFile;
         var fi = document.getElementById('file');
