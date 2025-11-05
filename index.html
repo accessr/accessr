@@ -89,7 +89,7 @@
       <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
         <p><strong>Drag & drop</strong> your file here, or</p>
         <button id="chooseBtn" type="button" class="btn">Choose a file</button>
-        <input id="file" type="file" />
+        <input id="file" type="file" accept=".docx" />
         <p class="mini" id="filename" aria-live="polite"></p>
         <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
           <label style="display:flex;gap:8px;align-items:center">
@@ -149,7 +149,7 @@
     </div>
   </section>
 
-  <!-- Early safety wiring (picker works even if main script fails) -->
+  <!-- Early safety wiring + EARLY PICK SYNC -->
   <script>
     (function(){
       var chooseBtn = document.getElementById('chooseBtn');
@@ -157,14 +157,33 @@
       var filenameEl = document.getElementById('filename');
       var runBtn = document.getElementById('runBtn');
       var debugEl = document.getElementById('debug');
+      var diagWrap  = document.getElementById('diag');
+      var diagFile  = document.getElementById('diagFile');
+      var diagReady = document.getElementById('diagReady');
+
       function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
+      function setDiagFile(text){ if(diagWrap) diagWrap.style.display='block'; if(diagFile) diagFile.innerHTML='• File: ' + text; }
+      function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
+
+      function onPick(f){
+        window.__accessrSelectedFile = f || null; // share with main app
+        if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
+        if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
+        if (f){
+          dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
+          setDiagFile('<span style="color:#34d399">' + f.name + '</span> (' + (f.type||'') + ', ' + (f.size||0) + ' bytes)');
+          setDiagReady(true);
+        } else {
+          setDiagFile('<em>none selected</em>');
+          setDiagReady(false);
+        }
+      }
+
       if (chooseBtn && fileInput){
         chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
         fileInput.addEventListener('change', function(){
           var f = (fileInput.files && fileInput.files[0]) || null;
-          if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
-          if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
-          if (f) dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
+          onPick(f);
         });
       }
     })();
@@ -258,32 +277,29 @@
 
     var parser=null, builder=null;
 
-    // Store original raw XML per part for root-tag graft
+    // Keep original raw XML per part for root-tag graft
     var __rawXmlByPart = Object.create(null);
 
     async function readXml(zip, name){
       var xml = await zip.files[name].async('string');
-      __rawXmlByPart[name] = xml; // keep original
+      __rawXmlByPart[name] = xml;
       return parser.parse(xml);
     }
 
-    // Graft original root start-tag (with all xmlns attrs) onto rebuilt XML
+    // Graft original root start-tag (keeps xmlns & prefixes)
     function graftRootTag(originalXml, rebuiltXml){
       if(!originalXml || !rebuiltXml) return rebuiltXml;
-      // capture first element start tag from each
       var origOpen = originalXml.match(/<\?xml[^>]*>\s*)?<(?:\w+:)?\w+[^>]*>/);
       var newOpen  = rebuiltXml.match(/<\?xml[^>]*>\s*)?<(?:\w+:)?\w+[^>]*>/);
       if(!newOpen || !origOpen) return rebuiltXml;
       return rebuiltXml.replace(newOpen[0], origOpen[0]);
     }
 
-    // Namespace-safe writer + root-tag graft
     function writeXml(zip, name, obj, opts){
       var xmlStr = builder.build(obj);
       if (!xmlStr.startsWith('<?xml')) {
         xmlStr = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + xmlStr;
       }
-      // In compatibility mode, graft original root tag (keeps all xmlns & prefixes exactly)
       if (opts && opts.compat && __rawXmlByPart[name]) {
         xmlStr = graftRootTag(__rawXmlByPart[name], xmlStr);
       }
@@ -443,6 +459,14 @@
         setDiagReady(!!currentFile);
       }
 
+      // ADOPT EARLY PICK (if selected before libs/UI wired)
+      (function adoptEarlyPick(){
+        var early = window.__accessrSelectedFile;
+        var fi = document.getElementById('file');
+        var f = early || (fi && fi.files && fi.files[0]) || null;
+        if (f) setFile(f);
+      })();
+
       setDiagLib(!!window.JSZip && !!(window.__XMLParserCtor && window.__XMLBuilderCtor), '(startup)');
 
       if (chooseBtn && fileInput) chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
@@ -481,12 +505,11 @@
         }
         setDiagLib(true,'(local)');
 
-        // IMPORTANT: in compatibility mode, keep prefixes (removeNSPrefix:false)
         var compatOn = !!(compat && compat.checked);
         parser = new XMLParserCtor({
           ignoreAttributes:false,
           attributeNamePrefix:'',
-          removeNSPrefix: !compatOn  ? true : false   // keep prefixes when compat is ON
+          removeNSPrefix: !compatOn ? true : false
         });
         builder = new XMLBuilderCtor({
           ignoreAttributes:false,
