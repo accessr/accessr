@@ -74,7 +74,7 @@
   <section class="wrap hero" id="home">
     <span class="chip">Free • Runs in your browser • No uploads</span>
     <h1>Make your Word documents accessible — in minutes, not days.</h1>
-    <p>Upload a <strong>.docx</strong>, run checks, auto-fix common issues (headings, lists, alt text, table headers, language & font sizing), and download a cleaned file plus an audit report — all without your document ever leaving your device.</p>
+    <p>Upload a <strong>.docx</strong>, run checks, auto-fix common issues, and download a cleaned file plus an audit report — all without your document ever leaving your device.</p>
     <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
       <a class="btn primary" href="#tool" aria-label="Jump to tool">Get started</a>
       <a class="btn" href="#how">How it works</a>
@@ -91,13 +91,20 @@
         <button id="chooseBtn" type="button" class="btn">Choose a file</button>
         <input id="file" type="file" accept=".docx" />
         <p class="mini" id="filename" aria-live="polite"></p>
+
+        <div class="mini" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:10px">
+          <label style="display:flex;gap:8px;align-items:center"><input id="fixImgAlt" type="checkbox" checked /> Fix: Add placeholder image alt</label>
+          <label style="display:flex;gap:8px;align-items:center"><input id="fixTblHdr" type="checkbox" checked /> Fix: Mark first table row as header</label>
+          <label style="display:flex;gap:8px;align-items:center"><input id="fixLang"   type="checkbox" checked /> Fix: Add run language if missing</label>
+          <label style="display:flex;gap:8px;align-items:center"><input id="fixHead"   type="checkbox" /> Fix: Convert obvious fake headings → Heading 2</label>
+          <label style="display:flex;gap:8px;align-items:center"><input id="fixSize"   type="checkbox" /> Fix: Raise tiny font to minimum</label>
+          <label style="display:flex;gap:8px;align-items:center"><input id="fixList"   type="checkbox" /> Fix: Convert fake bullets to real list style</label>
+        </div>
+
         <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
           <label style="display:flex;gap:8px;align-items:center">
             <input id="compat" type="checkbox" checked />
             <span>Compatibility mode (preserve namespaces/root)</span>
-          </label>
-          <label class="mini" style="display:flex;gap:8px;align-items:center">
-            <input id="autoFix" type="checkbox" checked /> Apply safe auto-fixes
           </label>
         </div>
         <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
@@ -105,7 +112,7 @@
 
       <div class="controls" role="group" aria-label="Options">
         <div class="range">
-          <label for="lang" class="mini">Language</label>
+          <label for="lang" class="mini">Default language</label>
           <select id="lang" aria-label="Default language for runs">
             <option value="en-AU">English (Australia)</option>
             <option value="en-GB">English (UK)</option>
@@ -149,60 +156,48 @@
     </div>
   </section>
 
-  <!-- Early safety wiring + EARLY PICK SYNC -->
+  <!-- Early safety wiring (keeps selection across load) -->
   <script>
-    (function(){
-      var chooseBtn = document.getElementById('chooseBtn');
-      var fileInput = document.getElementById('file');
-      var filenameEl = document.getElementById('filename');
-      var runBtn = document.getElementById('runBtn');
-      var debugEl = document.getElementById('debug');
-      var diagWrap  = document.getElementById('diag');
-      var diagFile  = document.getElementById('diagFile');
-      var diagReady = document.getElementById('diagReady');
-
-      function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
-      function setDiagFile(text){ if(diagWrap) diagWrap.style.display='block'; if(diagFile) diagFile.innerHTML='• File: ' + text; }
-      function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
-
-      function onPick(f){
-        window.__accessrSelectedFile = f || null; // share with main app
-        if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
-        if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
-        if (f){
-          dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
-          setDiagFile('<span style="color:#34d399">' + f.name + '</span> (' + (f.type||'') + ', ' + (f.size||0) + ' bytes)');
-          setDiagReady(true);
-        } else {
-          setDiagFile('<em>none selected</em>');
-          setDiagReady(false);
-        }
-      }
-
-      if (chooseBtn && fileInput){
-        chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
-        fileInput.addEventListener('change', function(){
-          var f = (fileInput.files && fileInput.files[0]) || null;
-          onPick(f);
-        });
-      }
-    })();
+  (function(){
+    var chooseBtn = document.getElementById('chooseBtn');
+    var fileInput = document.getElementById('file');
+    var filenameEl = document.getElementById('filename');
+    var runBtn = document.getElementById('runBtn');
+    var debugEl = document.getElementById('debug');
+    var diagWrap  = document.getElementById('diag');
+    var diagFile  = document.getElementById('diagFile');
+    var diagReady = document.getElementById('diagReady');
+    function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
+    function setDiagFile(text){ if(diagWrap) diagWrap.style.display='block'; if(diagFile) diagFile.innerHTML='• File: ' + text; }
+    function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
+    function onPick(f){
+      window.__accessrSelectedFile = f || null;
+      if (filenameEl) filenameEl.textContent = f ? ('Selected file: ' + (f.name||'')) : '';
+      if (runBtn) { runBtn.disabled = !f; runBtn.setAttribute('aria-disabled', String(!f)); }
+      if (f){
+        dbg('Picked: ' + (f.name||'(no name)') + ' • type=' + (f.type||'(blank)') + ' • size=' + (f.size||0) + ' bytes');
+        setDiagFile('<span style="color:#34d399">' + f.name + '</span> (' + (f.type||'') + ', ' + (f.size||0) + ' bytes)');
+        setDiagReady(true);
+      } else { setDiagFile('<em>none selected</em>'); setDiagReady(false); }
+    }
+    if (chooseBtn && fileInput){
+      chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
+      fileInput.addEventListener('change', function(){ onPick((fileInput.files && fileInput.files[0]) || null); });
+    }
+  })();
   </script>
 
   <!-- Local libraries -->
   <script src="./vendor/jszip.min.js"></script>
   <script src="./vendor/fxp.min.js"></script>
   <script src="./vendor/FileSaver.min.js"></script>
-  <!-- Normalize constructors & show Diagnostics -->
   <script>
     (function(){
       var hasFxpNS = !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder);
       var hasGlobal = !!(window.XMLParser && window.XMLBuilder);
       var ok = !!window.JSZip && !!(hasFxpNS || hasGlobal) && !!window.saveAs;
-
       window.__XMLParserCtor  = hasFxpNS ? window.fxp.XMLParser  : (hasGlobal ? window.XMLParser  : null);
       window.__XMLBuilderCtor = hasFxpNS ? window.fxp.XMLBuilder : (hasGlobal ? window.XMLBuilder : null);
-
       var diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
       if (diag) diag.style.display = 'block';
       if (diagLib) {
@@ -217,15 +212,15 @@
   <script>
     document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
 
-    // --- Helpers ---
+    // ------- utils -------
     function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
     function getRuns(p){ return ensureArray(p && p.r); }
-    function pStyleName(p){ if(!p || !p.pPr) return undefined; var s = p.pPr.pStyle; return (typeof s==='object'&&s.val!=null)?s.val:s; }
+    function pStyleName(p){ if(!p || !p.pPr) return undefined; var s=p.pPr.pStyle; return (typeof s==='object'&&s.val!=null)?s.val:s; }
     function setPStyle(p, name){ p.pPr = p.pPr || {}; p.pPr.pStyle = { val:name }; }
     function halfPoints(pt){ return Math.round(pt*2); }
     function isFakeHeading(txt){
-      var t=(txt||'').trim(); if(t.length<4) return false;
-      return /^[A-Z0-9][A-Z0-9\s\-:&]{3,}$/.test(t) || /^\d+(?:\.\d+)*\s+.+$/.test(t) || /^(Appendix|Annex|Section)\s+\w+/i.test(t);
+      var t=(txt||'').trim(); if(t.length<6) return false; // stricter
+      return (/^\d+(?:\.\d+)*\s+\S/.test(t)) || (/^[A-Z0-9][A-Z0-9\s\-:&]{6,}$/.test(t));
     }
     function getTextFromParagraph(p){
       var s=''; var runs=getRuns(p);
@@ -262,67 +257,35 @@
       var first=rows[0]; first.trPr = first.trPr || {}; first.trPr.tblHeader = { val:true }; return true;
     }
 
-    function makeReport(file){
-      return {
-        file, issues: [],
-        add(code, message, location, fix, details){ this.issues.push({ code, message, location, fix_applied:!!fix, details:details||{} }); },
-        toMarkdown(){
-          if(!this.issues.length) return '# Accessibility Report for `'+this.file+'`\n\n🎉 No issues found.\n';
-          var out=['# Accessibility Report for `'+this.file+'`',''];
-          for(var i=0;i<this.issues.length;i++){
-            var it=this.issues[i], line='- **['+it.code+']** '+it.message+' — *'+it.location+'* ('+(it.fix_applied?'✅ fixed':'⚠ needs review')+')';
-            if(it.details && Object.keys(it.details).length) line+='\n  - details: `'+JSON.stringify(it.details)+'`';
-            out.push(line);
-          }
-          return out.join('\n');
-        },
-        counts(){ var t=this.issues.length,f=0; for(var i=0;i<t;i++) if(this.issues[i].fix_applied) f++; return { total:t,fixed:f,flagged:t-f }; }
-      };
+    // SAFE root-tag graft (no fragile regex)
+    function graftRootTag(originalXml, rebuiltXml){
+      function firstStartTag(xml){
+        let i = xml.indexOf('<'); if (i < 0) return null;
+        if (xml.slice(i, i+5).toLowerCase() === '<?xml'){
+          const q = xml.indexOf('?>', i); if (q < 0) return null;
+          i = xml.indexOf('<', q + 2); if (i < 0) return null;
+        }
+        const j = xml.indexOf('>', i); if (j < 0) return null;
+        return { start: i, end: j + 1, text: xml.slice(i, j + 1) };
+      }
+      const orig = firstStartTag(originalXml); const newer = firstStartTag(rebuiltXml);
+      if (!orig || !newer) return rebuiltXml;
+      return rebuiltXml.slice(0, newer.start) + orig.text + rebuiltXml.slice(newer.end);
     }
 
-    var parser=null, builder=null;
-
-    // Keep original raw XML per part for root-tag graft
-    var __rawXmlByPart = Object.create(null);
+    var parser=null, builder=null, __rawXmlByPart=Object.create(null);
 
     async function readXml(zip, name){
       var xml = await zip.files[name].async('string');
       __rawXmlByPart[name] = xml;
       return parser.parse(xml);
     }
-
-    // SAFE root-tag graft (no fragile regex)
-    function graftRootTag(originalXml, rebuiltXml){
-      function firstStartTag(xml){
-        let i = xml.indexOf('<');
-        if (i < 0) return null;
-        if (xml.slice(i, i+5).toLowerCase() === '<?xml'){
-          const q = xml.indexOf('?>', i);
-          if (q < 0) return null;
-          i = xml.indexOf('<', q + 2);
-          if (i < 0) return null;
-        }
-        const j = xml.indexOf('>', i);
-        if (j < 0) return null;
-        return { start: i, end: j + 1, text: xml.slice(i, j + 1) };
-        }
-      const orig = firstStartTag(originalXml);
-      const newer = firstStartTag(rebuiltXml);
-      if (!orig || !newer) return rebuiltXml;
-      return rebuiltXml.slice(0, newer.start) + orig.text + rebuiltXml.slice(newer.end);
-    }
-
     function writeXml(zip, name, obj, opts){
       var xmlStr = builder.build(obj);
-      if (!xmlStr.startsWith('<?xml')) {
-        xmlStr = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + xmlStr;
-      }
-      if (opts && opts.compat && __rawXmlByPart[name]) {
-        xmlStr = graftRootTag(__rawXmlByPart[name], xmlStr);
-      }
+      if (!xmlStr.startsWith('<?xml')) { xmlStr = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + xmlStr; }
+      if (opts && opts.compat && __rawXmlByPart[name]) xmlStr = graftRootTag(__rawXmlByPart[name], xmlStr);
       zip.file(name, xmlStr);
     }
-
     function listWordXmlParts(zip){
       var out=[], names=Object.keys(zip.files);
       for(var i=0;i<names.length;i++){
@@ -335,39 +298,49 @@
     }
 
     function processDocPart(docObj, report, opts){
-      var minFontPt=opts.minFontPt, lang=opts.lang, applyFixes=opts.applyFixes;
+      var F = opts.fixes; // granular flags
+      var minFontPt=opts.minFontPt, lang=opts.lang;
       var documentNode=docObj.document; if(!documentNode || !documentNode.body) return;
 
       var body=documentNode.body, blocks=[]; var keys=Object.keys(body);
       for(var ki=0;ki<keys.length;ki++){ var k=keys[ki], arr=ensureArray(body[k]); for(var ai=0;ai<arr.length;ai++) blocks.push({type:k,node:arr[ai]}); }
 
+      // Headings (flag always, fix only if enabled)
       var lastH=0;
       for (var i=0;i<blocks.length;i++){
         var blk=blocks[i]; if(blk.type!=='p') continue;
         var p=blk.node, style=pStyleName(p)||'', txt=getTextFromParagraph(p);
         if(/^Heading\s*([1-9])$/i.test(style)){
-          var lvl=Number(style.replace(/[^\d]/g,''))||1; if(lastH && (lvl-lastH)>1) report.add('H-LEVEL-SKIP','Skipped heading level from H'+lastH+' to H'+lvl,'Paragraph '+(i+1)); lastH=lvl;
+          var lvl=Number(style.replace(/[^\d]/g,''))||1;
+          if(lastH && (lvl-lastH)>1) report.add('H-LEVEL-SKIP','Skipped heading level from H'+lastH+' to H'+lvl,'Paragraph '+(i+1));
+          lastH=lvl;
         } else if(isFakeHeading(txt)){
           report.add('H-FAKE','Looks like a heading but is not using a Heading style.','Paragraph '+(i+1),false,{text:txt});
-          if(applyFixes){ setPStyle(p,'Heading 2'); report.add('H-FAKE->FIX','Converted fake heading to "Heading 2".','Paragraph '+(i+1),true,{text:txt}); }
+          if(F.headings){ setPStyle(p,'Heading 2'); report.add('H-FAKE->FIX','Converted fake heading to "Heading 2".','Paragraph '+(i+1),true,{text:txt}); }
         }
       }
 
+      // Paragraph-level checks
       var paragraphs=[]; for(var bi=0;bi<blocks.length;bi++) if(blocks[bi].type==='p') paragraphs.push(blocks[bi].node);
       var totalImg=0, missingAlt=0, altFixed=0;
 
       for (var pi=0;pi<paragraphs.length;pi++){
-        var pp=paragraphs[pi]; var tooSmall=false, sizeFixed=false, langFixed=false;
+        var pp=paragraphs[pi], tooSmall=false, sizeFixed=false, langFixed=false;
         var runs=getRuns(pp);
         for(var ri=0;ri<runs.length;ri++){
           var r=runs[ri], rPr=r.rPr||{}, sz=(rPr.sz&&rPr.sz.val!=null)?rPr.sz.val:rPr.sz;
-          if(sz!=null){ var n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minFontPt)){ tooSmall=true; if(applyFixes){ if(enforceRunSize(r,minFontPt)) sizeFixed=true; } } }
-          if(applyFixes){ if(ensureRunLang(r, lang)) langFixed=true; }
+          if(sz!=null){ var n=Number(sz); if(!Number.isNaN(n) && n<halfPoints(minFontPt)){ tooSmall=true; if(F.fontSize){ if(enforceRunSize(r,minFontPt)) sizeFixed=true; } } }
+          if(F.lang){ if(ensureRunLang(r, lang)) langFixed=true; }
+
           var drawing=r.drawing; if(drawing){
             var list=[], inl=drawing.inline, anc=drawing.anchor;
             if(Array.isArray(inl)){ for(var a=0;a<inl.length;a++) if(inl[a]) list.push(inl[a]); } else if(inl) list.push(inl);
             if(Array.isArray(anc)){ for(var b=0;b<anc.length;b++) if(anc[b]) list.push(anc[b]); } else if(anc) list.push(anc);
-            for(var di=0;di<list.length;di++){ var d=list[di]; if(!d || !d.docPr) continue; totalImg++; var has = d.docPr.descr && (''+d.docPr.descr).trim()!==''; if(!has){ missingAlt++; if(applyFixes){ d.docPr.descr='IMAGE – add descriptive alt text'; altFixed++; } } }
+            for(var di=0;di<list.length;di++){
+              var d=list[di]; if(!d || !d.docPr) continue; totalImg++;
+              var has = d.docPr.descr && (''+d.docPr.descr).trim()!=='';
+              if(!has){ missingAlt++; if(F.imgAlt){ d.docPr.descr='IMAGE – add descriptive alt text'; altFixed++; } }
+            }
           }
         }
         if(tooSmall) report.add('TXT-SIZE','Text under '+minFontPt+'pt detected.','Paragraph '+(pi+1));
@@ -379,30 +352,37 @@
 
         if(/^(-|\*|•)\s+\S+/.test(t)){
           var hasNumPr=!!(pp && pp.pPr && pp.pPr.numPr); var styleName=(pStyleName(pp)||'').toLowerCase(); var isList=styleName.indexOf('list')>-1;
-          if(!hasNumPr && !isList){ report.add('LIST-FAKE','Paragraph looks like a fake bullet; convert to a real list style.','Paragraph '+(pi+1),false,{text:t});
-            if(applyFixes){ stripFakeBullet(pp); setPStyle(pp,'ListParagraph'); report.add('LIST-FAKE->FIX','Converted fake bullet to a list paragraph style.','Paragraph '+(pi+1),true); } }
+          if(!hasNumPr && !isList){
+            report.add('LIST-FAKE','Paragraph looks like a fake bullet; convert to a real list style.','Paragraph '+(pi+1),false,{text:t});
+            if(F.list){ stripFakeBullet(pp); setPStyle(pp,'ListParagraph'); report.add('LIST-FAKE->FIX','Converted fake bullet to a list paragraph style.','Paragraph '+(pi+1),true); }
+          }
         }
       }
 
       if(totalImg>0 && missingAlt>0){
         report.add('IMG-ALT', missingAlt+' of '+totalImg+' images missing alt text.','Document');
-        if(applyFixes && altFixed>0) report.add('IMG-ALT->FIX','Added placeholder alt text to '+altFixed+' image(s).','Document',true);
+        if(F.imgAlt && altFixed>0) report.add('IMG-ALT->FIX','Added placeholder alt text to '+altFixed+' image(s).','Document',true);
       }
 
       var tables=[]; for(var ti=0;ti<blocks.length;ti++) if(blocks[ti].type==='tbl') tables.push(blocks[ti].node);
       for (var j=0;j<tables.length;j++){
         var tbl=tables[j], rows=ensureArray(tbl && tbl.tr); if(!rows.length) continue;
         var first=rows[0], already=!!(first && first.trPr && first.trPr.tblHeader);
-        if(!already && isProbableHeaderRow(first)){ report.add('TBL-HEADER','Table likely needs first row marked as header.','Table '+(j+1));
-          if(applyFixes){ if(setTableHeaderRow(tbl)) report.add('TBL-HEADER->FIX','Marked first row as a repeating header.','Table '+(j+1),true); } }
+        if(!already && isProbableHeaderRow(first)){
+          report.add('TBL-HEADER','Table likely needs first row marked as header.','Table '+(j+1));
+          if(F.tblHeader && setTableHeaderRow(tbl)) report.add('TBL-HEADER->FIX','Marked first row as a repeating header.','Table '+(j+1),true);
+        }
       }
 
-      var hadLang=false;
-      outer: for(var ppi=0;ppi<paragraphs.length;ppi++){
-        var rr=getRuns(paragraphs[ppi]);
-        for(var rri=0;rri<rr.length;rri++){ var lg=rr[rri] && rr[rri].rPr && rr[rri].rPr.lang; if(lg && (lg.val||lg.eastAsia||lg.bidi)){ hadLang=true; break outer; } }
+      // Soft doc-level language flag (if no run had any lang)
+      if (F.lang) {
+        var hadLang=false;
+        outer: for(var ppi=0;ppi<paragraphs.length;ppi++){
+          var rr=getRuns(paragraphs[ppi]);
+          for(var rri=0;rri<rr.length;rri++){ var lg=rr[rri] && rr[rri].rPr && rr[rri].rPr.lang; if(lg && (lg.val||lg.eastAsia||lg.bidi)){ hadLang=true; break outer; } }
+        }
+        if(!hadLang) report.add('DOC-LANG','No document language detected; set a default (e.g., en-AU).','Document');
       }
-      if(!hadLang) report.add('DOC-LANG','No document language detected; set a default (e.g., en-AU).','Document');
     }
 
     async function processFile(file, opts){
@@ -429,7 +409,7 @@
       return { report, fixedBlob, reportBlob };
     }
 
-    // ---------- UI + Diagnostics ----------
+    // ---------- UI ----------
     (function(){
       var drop=document.getElementById('drop');
       var fileInput=document.getElementById('file');
@@ -443,9 +423,15 @@
       var summary=document.getElementById('summary');
       var langSel=document.getElementById('lang');
       var minFont=document.getElementById('minFont');
-      var autoFix=document.getElementById('autoFix');
       var compat=document.getElementById('compat');
       var debugEl=document.getElementById('debug');
+
+      var fixImgAlt=document.getElementById('fixImgAlt');
+      var fixTblHdr=document.getElementById('fixTblHdr');
+      var fixLang=document.getElementById('fixLang');
+      var fixHead=document.getElementById('fixHead');
+      var fixSize=document.getElementById('fixSize');
+      var fixList=document.getElementById('fixList');
 
       var diagWrap=document.getElementById('diag');
       var diagLib=document.getElementById('diagLib');
@@ -476,7 +462,7 @@
         setDiagReady(!!currentFile);
       }
 
-      // Adopt any early pick (before libs/UI finished)
+      // Adopt early pick if user chose before libs/UI loaded
       (function adoptEarlyPick(){
         var early = window.__accessrSelectedFile;
         var fi = document.getElementById('file');
@@ -523,16 +509,8 @@
         setDiagLib(true,'(local)');
 
         var compatOn = !!(compat && compat.checked);
-        parser = new XMLParserCtor({
-          ignoreAttributes:false,
-          attributeNamePrefix:'',
-          removeNSPrefix: !compatOn ? true : false
-        });
-        builder = new XMLBuilderCtor({
-          ignoreAttributes:false,
-          attributeNamePrefix:'',
-          format:true
-        });
+        parser = new XMLParserCtor({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix: !compatOn ? true : false });
+        builder = new XMLBuilderCtor({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
 
         runBtn.disabled=true; runBtn.setAttribute('aria-disabled','true');
         statusEl.textContent='Processing… (all on your device)';
@@ -543,8 +521,16 @@
           var opts = {
             minFontPt: Number(minFont.value || 11),
             lang: (document.getElementById('lang').value || 'en-AU'),
-            applyFixes: !!(autoFix && autoFix.checked),
-            compat: compatOn
+            applyFixes: true, // we apply only the checked ones below
+            compat: compatOn,
+            fixes: {
+              imgAlt: !!(fixImgAlt && fixImgAlt.checked),
+              tblHeader: !!(fixTblHdr && fixTblHdr.checked),
+              lang: !!(fixLang && fixLang.checked),
+              headings: !!(fixHead && fixHead.checked),
+              fontSize: !!(fixSize && fixSize.checked),
+              list: !!(fixList && fixList.checked),
+            }
           };
           var result=await processFile(currentFile, opts);
           var report=result.report, fixedBlob=result.fixedBlob, reportBlob=result.reportBlob;
@@ -564,12 +550,12 @@
             var url1=URL.createObjectURL(reportBlob);
             dlReport.href=url1; dlReport.download=base+'.a11y-report-'+ts+'.md'; dlReport.style.display='inline-flex';
           }
-          if(fixedBlob && opts.applyFixes){
+          if(fixedBlob){
             var url2=URL.createObjectURL(fixedBlob);
             dlFixed.href=url2; dlFixed.download=base+'.fixed-'+ts+'.docx'; dlFixed.style.display='inline-flex';
           }
 
-          statusEl.textContent=opts.applyFixes ? 'Done. Download your fixed document and report below.' : 'Done. Download your report below.';
+          statusEl.textContent='Done. Download your fixed document and report below.';
         }catch(err){
           console.error(err);
           setDiagErr(err && err.message ? err.message : String(err));
