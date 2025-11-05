@@ -169,7 +169,7 @@
   <script src="./vendor/fxp.min.js"></script>
   <script src="./vendor/FileSaver.min.js"></script>
   <script>
-    // Quick sanity: show missing libs in Diagnostics if any; also expose constructors
+    // Quick sanity: show missing libs in Diagnostics; expose constructors
     (function(){
       var hasFXP = !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder);
       var ok = !!window.JSZip && hasFXP && !!window.saveAs;
@@ -297,7 +297,33 @@
       var xml = await zip.files[name].async('string');
       return parser.parse(xml);
     }
-    function writeXml(zip, name, obj){ zip.file(name, builder.build(obj)); }
+
+    // *** Namespace-safe write: critical fix so Word/Docs don't show plain XML ***
+    function writeXml(zip, name, obj){
+      // Ensure WordprocessingML namespaces on the root element
+      if (obj && obj.document) {
+        if (!obj.document.xmlns) obj.document.xmlns = {};
+        // Default namespace (no prefix) — critical
+        obj.document.xmlns['']  = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        // Common prefixed namespaces
+        obj.document.xmlns['w']   = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        obj.document.xmlns['r']   = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        obj.document.xmlns['m']   = "http://schemas.openxmlformats.org/officeDocument/2006/math";
+        obj.document.xmlns['w14'] = "http://schemas.microsoft.com/office/word/2010/wordml";
+        obj.document.xmlns['w15'] = "http://schemas.microsoft.com/office/word/2012/wordml";
+      }
+
+      // Build raw XML
+      var xmlStr = builder.build(obj);
+
+      // Ensure XML header
+      if (!xmlStr.startsWith('<?xml')) {
+        xmlStr = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + xmlStr;
+      }
+
+      zip.file(name, xmlStr);
+    }
+
     function listWordXmlParts(zip){
       var out=[]; var names=Object.keys(zip.files);
       for (var i=0;i<names.length;i++){
