@@ -92,7 +92,17 @@
         <input id="file" type="file" accept=".docx" />
         <p class="mini" id="filename" aria-live="polite"></p>
 
-        <div class="mini" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:10px">
+        <!-- SAMPLE BUTTONS -->
+        <div class="mini" style="margin-top:12px">
+          <p style="margin:0 0 6px">No file handy? Try a sample:</p>
+          <a class="btn" href="samples/marketing-brief-before.docx" download>Example 1 — Marketing Brief (Before)</a>
+          <a class="btn" href="samples/marketing-brief-after.docx" download>Example 1 — Marketing Brief (After)</a>
+          <a class="btn" href="samples/policy-extract-before.docx" download>Example 2 — Policy Extract (Before)</a>
+          <a class="btn" href="samples/policy-extract-after.docx" download>Example 2 — Policy Extract (After)</a>
+          <p class="mini" style="margin-top:6px">“Before” docs include fake headings, raw URLs, tiny text, and tables without headers. “After” versions show the accessible structure.</p>
+        </div>
+
+        <div class="mini" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px">
           <label style="display:flex;gap:8px;align-items:center"><input id="fixImgAlt" type="checkbox" checked /> Fix: Add placeholder image alt</label>
           <label style="display:flex;gap:8px;align-items:center"><input id="fixTblHdr" type="checkbox" checked /> Fix: Mark first table row as header</label>
           <label style="display:flex;gap:8px;align-items:center"><input id="fixLang"   type="checkbox" checked /> Fix: Add run language if missing</label>
@@ -159,6 +169,78 @@
     </div>
   </section>
 
+  <section class="wrap section grid grid-3" id="how" aria-label="How it works">
+    <div class="card"><h2>1) Upload</h2><p>Select a <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> or drag it in. Your document is processed locally and never leaves your device.</p></div>
+    <div class="card"><h2>2) Check & Fix</h2><p>We flag common issues: fake headings & skipped levels, tiny text, missing image alt text, fake bullets, missing table headers, raw URLs, & missing language. Safe auto-fixes are applied if enabled.</p></div>
+    <div class="card"><h2>3) Download</h2><p>Grab a cleaned <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> and a Markdown report for your records or internal QA workflows.</p></div>
+  </section>
+
+  <section class="wrap section" id="features" aria-label="Key features">
+    <div class="card">
+      <h2>What gets checked & fixed</h2>
+      <ul style="display:grid;gap:12px" role="list">
+        <li><strong>Headings</strong> — detect fake headings & level skips; convert obvious fakes → <code>Heading 2</code>.</li>
+        <li><strong>Text size</strong> — flag runs below your size floor (default 11pt) and raise them.</li>
+        <li><strong>Images</strong> — flag missing alt; add placeholder <em>“IMAGE – add descriptive alt text”</em>.</li>
+        <li><strong>Lists</strong> — convert “- ” / “• ” into real list styling (conservative & safe).</li>
+        <li><strong>Tables</strong> — mark likely header rows to repeat for better export.</li>
+        <li><strong>Links</strong> — flag raw URLs; recommend descriptive link text.</li>
+        <li><strong>Language</strong> — set run language if missing (e.g., <code>en-AU</code>).</li>
+      </ul>
+      <p class="mini">Note: Full WCAG conformance depends on your final web format; this prepares Word docs for cleaner export (Word HTML / Mammoth / Pandoc).</p>
+    </div>
+  </section>
+
+  <!-- Examples section -->
+  <section class="wrap section" id="examples" aria-label="Examples">
+    <div class="card">
+      <h2>Examples</h2>
+      <p>See how Accessr improves document accessibility from “Before” to “After”.</p>
+      <ul>
+        <li><strong>Headings:</strong> Fake headings → true Heading styles (H1/H2).</li>
+        <li><strong>Lists:</strong> Fake bullets → list paragraph styling.</li>
+        <li><strong>Tables:</strong> First row marked as <code>Header</code> for better export.</li>
+        <li><strong>Images:</strong> Placeholder alt text added where missing.</li>
+        <li><strong>Language/Size:</strong> Run language tags and minimum font size normalized.</li>
+      </ul>
+      <p>
+        <a class="btn" href="samples/marketing-brief-before.docx" download>Marketing Brief — Before</a>
+        <a class="btn" href="samples/marketing-brief-after.docx" download>Marketing Brief — After</a>
+        <a class="btn" href="samples/policy-extract-before.docx" download>Policy Extract — Before</a>
+        <a class="btn" href="samples/policy-extract-after.docx" download>Policy Extract — After</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap section" id="faq" aria-label="Frequently asked questions">
+    <div class="card">
+      <h2>FAQ</h2>
+      <details>
+        <summary>Does my file get uploaded to a server?</summary>
+        <p>No. Everything runs in your browser using Web APIs. Your file never leaves your device.</p>
+      </details>
+      <details>
+        <summary>What kinds of issues can’t be fully checked?</summary>
+        <p>Color contrast and complex shapes/SmartArt are limited in Word’s XML. This tool flags likely problems but can’t guarantee full WCAG compliance without exporting to HTML and running a web a11y scanner.</p>
+      </details>
+      <details>
+        <summary>Can I process confidential documents?</summary>
+        <p>Yes—because processing is local. Always follow your organisation’s policies.</p>
+      </details>
+      <details>
+        <summary>Will you add true numbered/bulleted lists?</summary>
+        <p>This MVP applies safe list styling. Advanced numbering (editing <code>word/numbering.xml</code>) can be added if you want a more opinionated fix pass.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="wrap section" id="privacy" aria-label="Privacy policy">
+    <div class="card">
+      <h2>Privacy</h2>
+      <p>We do not collect, transmit, or store your documents. All processing happens locally in your browser. If you host this page yourself, review any third-party analytics you add to ensure they do not capture document contents.</p>
+    </div>
+  </section>
+
   <!-- Early safety wiring -->
   <script>
   (function(){
@@ -218,10 +300,10 @@
   <script>
     document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
 
-    // ---- utils shared ----
+    // utils
     function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
 
-    // ---- report helper ----
+    // report builder
     function makeReport(fileName){
       return {
         file: fileName || '(untitled)',
@@ -243,22 +325,21 @@
       };
     }
 
-    // ---- SafeTouch: DOM-based minimal edits (no reformatting) ----
+    // SafeTouch DOM-based minimal edits
     function xmlToDom(xml){
       const dom = new DOMParser().parseFromString(xml, 'application/xml');
       const err = dom.querySelector('parsererror');
       if (err) throw new Error('XML parse error');
       return dom;
     }
-    function domToXml(dom){
-      return (new XMLSerializer()).serializeToString(dom);
-    }
+    function domToXml(dom){ return (new XMLSerializer()).serializeToString(dom); }
 
     function safeTouch_documentXml(xml, opts, report){
       const dom = xmlToDom(xml);
       const wns = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
       const wps = 'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing';
-      // 1) Images: add alt on wp:docPr if missing descr
+
+      // 1) Add placeholder image alt text
       if (opts.fixes.imgAlt){
         const docPrs = dom.getElementsByTagNameNS(wps, 'docPr');
         let added=0, total=docPrs.length;
@@ -275,7 +356,8 @@
           else report.add('IMG-ALT','All images already have alt text.','Document',false);
         }
       }
-      // 2) Tables: mark first row as header if obvious
+
+      // 2) Mark first table row as header if it looks like one
       if (opts.fixes.tblHeader){
         const tbls = dom.getElementsByTagNameNS(wns,'tbl');
         let fixed=0;
@@ -284,7 +366,6 @@
           const rows = tbl.getElementsByTagNameNS(wns,'tr');
           if (!rows.length) continue;
           const first = rows[0];
-          // heuristic: short-ish text in many cells
           const cells = first.getElementsByTagNameNS(wns,'tc');
           if (!cells.length) continue;
           let hits=0;
@@ -297,7 +378,6 @@
             if (/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/.test(texts)) hits++;
           }
           if (hits >= Math.max(1, Math.floor(cells.length/2))){
-            // add <w:tblHeader w:val="true"/> in first row's trPr if not present
             let trPr = first.getElementsByTagNameNS(wns,'trPr')[0];
             if (!trPr){ trPr = dom.createElementNS(wns,'w:trPr'); first.insertBefore(trPr, first.firstChild); }
             if (!trPr.getElementsByTagNameNS(wns,'tblHeader')[0]){
@@ -310,7 +390,8 @@
         }
         if (fixed>0) report.add('TBL-HEADER->FIX',`Marked first row as a repeating header in ${fixed} table(s).`,'Document',true);
       }
-      // 3) Runs: add w:lang where missing
+
+      // 3) Set run language where missing
       if (opts.fixes.lang){
         const runs = dom.getElementsByTagNameNS(wns,'r');
         let set=0;
@@ -330,10 +411,10 @@
         }
         if (set>0) report.add('DOC-LANG->FIX',`Set language to ${opts.lang} on ${set} run(s).`,'Document',true);
       }
-      return domToXml(dom); // DOMSerializer preserves prefixes and avoids reflowing unrelated nodes
+      return domToXml(dom);
     }
 
-    // ---- FXP mode (legacy, for advanced conversions) ----
+    // FXP scaffolding (kept for compatibility switch)
     let parser = null, builder = null, __rawXmlByPart = Object.create(null);
     function graftRootTag(originalXml, rebuiltXml){
       function firstStartTag(xml){
@@ -364,7 +445,7 @@
       } return out;
     }
 
-    // ---- Process orchestrator ----
+    // Orchestrator
     async function processFile(file, opts){
       const buffer = await file.arrayBuffer();
       const zip = await JSZip.loadAsync(buffer);
@@ -373,7 +454,6 @@
       const report = makeReport(file.name);
 
       if (opts.safeTouch){
-        // Only touch minimal things via DOM; leave structure intact
         for (const name of parts){
           const xml = await zip.files[name].async('string');
           const updated = safeTouch_documentXml(xml, opts, report);
@@ -382,24 +462,18 @@
           }
         }
       } else {
-        // FXP mode (optional, more invasive). Only enable the toggles you really want.
         const XMLParserCtor  = window.__XMLParserCtor;
         const XMLBuilderCtor = window.__XMLBuilderCtor;
         if (!XMLParserCtor || !XMLBuilderCtor) throw new Error('FXP libraries not available');
         const compatOn = !!opts.compat;
         parser = new XMLParserCtor({ ignoreAttributes:false, attributeNamePrefix:'', removeNSPrefix: !compatOn ? true : false });
         builder = new XMLBuilderCtor({ ignoreAttributes:false, attributeNamePrefix:'', format:true });
-
-        // Only the conservative pieces here to minimise formatting shifts
         for (const name of parts){
           const js = await readXml(zip, name);
-          // Minimal JS walk for counts (optional): we rely on SafeTouch for actual edits in default flow.
-          // If you later enable fxp-only edits, wire them here.
           writeXml(zip, name, js, { compat: opts.compat });
         }
       }
 
-      // Package outputs
       const content = await zip.generateAsync({ type:'blob' });
       const fixedBlob = new Blob([content], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       const md = report.toMarkdown();
@@ -407,7 +481,7 @@
       return { report, fixedBlob, reportBlob };
     }
 
-    // ---- UI wiring ----
+    // UI wiring
     (function(){
       const drop=document.getElementById('drop');
       const fileInput=document.getElementById('file');
@@ -426,9 +500,9 @@
       const fixImgAlt=document.getElementById('fixImgAlt');
       const fixTblHdr=document.getElementById('fixTblHdr');
       const fixLang=document.getElementById('fixLang');
-      const fixHead=document.getElementById('fixHead'); // only in fxp mode (advanced)
-      const fixSize=document.getElementById('fixSize'); // only in fxp mode (advanced)
-      const fixList=document.getElementById('fixList'); // only in fxp mode (advanced)
+      const fixHead=document.getElementById('fixHead');
+      const fixSize=document.getElementById('fixSize');
+      const fixList=document.getElementById('fixList');
       const diagWrap=document.getElementById('diag');
       const diagLib=document.getElementById('diagLib');
       const diagFile=document.getElementById('diagFile');
@@ -481,20 +555,19 @@
         if(!looksLikeDocx(f)){ statusEl.innerHTML="<span class='err'>Please drop a Word (.docx) file.</span>"; return; }
         setFile(f);
       });
-      // click guard: only background or button triggers picker
       drop.addEventListener('click', function(e){
         const isBackground = e.target === drop;
         const isChooseBtn  = e.target && (e.target.id === 'chooseBtn');
         if (isBackground || isChooseBtn) fileInput.click();
       });
-      Array.from(drop.querySelectorAll('input, label, select, button')).forEach(el=>{
+      Array.from(drop.querySelectorAll('input, label, select, button, a')).forEach(el=>{
         el.addEventListener('click', e => e.stopPropagation());
       });
 
       window.addEventListener('error', e=> setDiagErr('Script error: '+(e.message||'')));
       window.addEventListener('unhandledrejection', e=> setDiagErr('Unhandled promise: '+(e.reason && e.reason.message ? e.reason.message : String(e.reason || ''))));
 
-      runBtn.addEventListener('click', async function(){
+      document.getElementById('runBtn').addEventListener('click', async function(){
         setDiagErr('');
         if(!currentFile){ statusEl.innerHTML="<span class='err'>No file selected.</span>"; return; }
 
@@ -513,10 +586,9 @@
               imgAlt: !!(fixImgAlt && fixImgAlt.checked),
               tblHeader: !!(fixTblHdr && fixTblHdr.checked),
               lang: !!(fixLang && fixLang.checked),
-              // the three below are fxp-only (leave off in SafeTouch)
-              headings: !!(fixHead && fixHead.checked),
-              fontSize: !!(fixSize && fixSize.checked),
-              list: !!(fixList && fixList.checked),
+              headings: !!(fixHead && fixHead.checked), // fxp-only
+              fontSize: !!(fixSize && fixSize.checked), // fxp-only
+              list: !!(fixList && fixList.checked),     // fxp-only
             }
           };
 
