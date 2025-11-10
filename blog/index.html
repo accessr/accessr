@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessr Blog</title>
+<meta name="description" content="Updates, tutorials and accessibility explainers from Accessr." />
+<link rel="canonical" href="https://accessr.net/blog/" />
+<link rel="stylesheet" href="/assets/style.css" />
+<style>html{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}</style>
+</head>
+<body>
+<header class="bar">
+<div class="container bar-inner">
+<a href="/" class="brand"><span class="logo">A</span> Accessr</a>
+<nav><a href="/">Home</a> <a href="/blog/" aria-current="page">Blog</a></nav>
+</div>
+</header>
+
+
+<main class="container" style="padding:48px 24px;max-width:900px">
+<h1>Blog</h1>
+<p class="muted">Updates, tutorials, and accessibility explainers.</p>
+
+
+<section class="post-list">
+<article class="post-card">
+<h2><a href="/blog/how-accessr-works.html">Accessibility Checker for Word: How Accessr Works (Client‑Side, Private)</a></h2>
+<small>11 November 2025</small>
+<p>What we check and fix automatically, what remains manual (and why), and how privacy is preserved.</p>
+</article>
+
+
+<article class="post-card">
+<h2><a href="/blog/docx-alt-text-guide.html">Alt‑Text for Word: A Fast, Practical Checklist</a></h2>
+<small>08 November 2025</small>
+<p>A 10‑minute workflow to get alt‑text right in real documents without blowing your deadline.</p>
+</article>
+</section>
+</main>
+
+
+<footer class="site-footer">
+<div class="container foot-inner">
+<small>© <span id="year"></span> Accessr</small>
+<nav><a href="/blog/">Blog</a> · <a href="/">Home</a></nav>
+</div>
+</footer>
+
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
