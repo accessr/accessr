@@ -51,6 +51,12 @@
     .range{display:flex;gap:10px;align-items:center}
     input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
     .live{min-height:1.3em;margin-top:8px}
+    /* Blog */
+    .post h3{margin:.2rem 0 0;font-weight:600}
+    .post time{color:var(--muted);font-size:13px}
+    .post p{margin:.5rem 0}
+    .post ul{margin:.5rem 0 0 1.1rem}
+    .post blockquote{margin:.8rem 0;padding:.8rem;border-left:4px solid #264968;background:#0c151f;color:#cfe3ff;border-radius:8px}
   </style>
 </head>
 <body>
@@ -66,6 +72,8 @@
       </a>
       <div class="grow"></div>
       <a class="btn" href="#tool">Launch tool</a>
+      <a class="btn" href="#examples">Examples</a>
+      <a class="btn" href="#blog">Blog</a>
       <a class="btn" href="#faq">FAQ</a>
       <a class="btn primary" href="#privacy">Privacy</a>
     </div>
@@ -209,6 +217,49 @@
         <a class="btn" href="samples/policy-extract-before.docx" download>Policy Extract — Before</a>
         <a class="btn" href="samples/policy-extract-after.docx" download>Policy Extract — After</a>
       </p>
+    </div>
+  </section>
+
+  <!-- Blog -->
+  <section class="wrap section" id="blog" aria-label="Blog">
+    <div class="card post" itemscope itemtype="https://schema.org/BlogPosting">
+      <h2 itemprop="headline">Introducing Accessr: a free, privacy-first Word accessibility fixer (that runs in your browser)</h2>
+      <div class="mini">
+        <time itemprop="datePublished" datetime="2025-11-07">7 Nov 2025</time> · <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Accessr</span></span>
+      </div>
+
+      <p itemprop="description">Accessibility checks for Word files usually mean exporting to PDF, running paid scanners, or handing sensitive documents to a third-party service. Accessr flips that model: everything runs locally in your browser — no uploads, no sign-up, no data collection.</p>
+
+      <h3>What Accessr does</h3>
+      <ul>
+        <li>Detects <strong>fake headings</strong> and level skips; converts obvious fakes to real heading styles (optional).</li>
+        <li>Flags <strong>tiny text</strong> and can raise it to your minimum point size.</li>
+        <li>Finds images without <strong>alt text</strong>; inserts a clear placeholder reminder.</li>
+        <li>Turns “• ” / “- ” lines into <strong>real lists</strong> (safe, conservative).</li>
+        <li>Marks likely <strong>table header rows</strong> so they repeat correctly when exported.</li>
+        <li>Sets <strong>language</strong> on runs if missing (e.g., <code>en-AU</code>).</li>
+      </ul>
+
+      <blockquote>Accessr is not a WCAG certification service. It prepares Word documents for cleaner export (Word HTML/Mammoth/Pandoc) and faster human review. Final conformance always depends on your published format and context.</blockquote>
+
+      <h3>Why privacy-first?</h3>
+      <p>Government, universities and businesses handle sensitive drafts. Accessr never sends your file anywhere — it uses Web APIs to open, check and rewrite the <code>.docx</code> directly in your browser. You can even save this page and run it offline.</p>
+
+      <h3>Try it in under a minute</h3>
+      <ol>
+        <li>Scroll to <a href="#tool">Launch tool</a>.</li>
+        <li>Pick a <strong>.docx</strong> or download a sample from <a href="#examples">Examples</a>.</li>
+        <li>Press <em>Run checks</em> and download your <em>fixed .docx</em> and <em>report.md</em>.</li>
+      </ol>
+
+      <h3>Roadmap</h3>
+      <ul>
+        <li>Smarter heading detection (across headers/footers, styles inference).</li>
+        <li>Numbering model for proper ordered lists.</li>
+        <li>Optional export to HTML with an a11y pass.</li>
+      </ul>
+
+      <p>Questions or feedback? Open an issue on GitHub or drop us a line. If your organisation has strict review requirements, you can fork the site and host it internally.</p>
     </div>
   </section>
 
