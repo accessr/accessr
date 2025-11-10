@@ -23,3 +23,10 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:sy
 .prose{max-width:900px;padding:48px 24px}
 .prose h1,.prose h2,.prose h3{line-height:1.25}
 .prose code{background:#0b10200d;padding:.1rem .35rem;border-radius:.25rem}
+/* HOTFIX for layout classes used by the tool section */
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.grid{display:grid;gap:18px}
+@media (min-width:900px){
+  .grid-2{grid-template-columns:1.1fr .9fr;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+}
