@@ -2,297 +2,172 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Accessr — Free Accessibility Checker & Fixer for Word (.docx)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accessr — Free Accessibility Checker & Fixer for Word (.docx)</title>
   <meta name="description" content="Accessr is a free, privacy-first accessibility checker for Microsoft Word .docx. Runs entirely in your browser — no uploads, no data collection." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%230B1020'/%3E%3Cpath fill='%233B82F6' d='M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z'/%3E%3Ccircle cx='196' cy='92' r='10' fill='%2310B981'/%3E%3C/svg%3E" />
-  <style>
-    :root{
-      --bg:#0b1020; --panel:#0f1622; --text:#eef4fb; --muted:#9fb0c2;
-      --brand:#3B82F6; --accent:#10B981; --border:#1b2430;
-      --ok:#34d399; --warn:#ffcc00; --err:#ff6b6b;
-      --focus: 0 0 0 3px rgba(59,130,246,.45), 0 0 0 6px rgba(59,130,246,.2);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:linear-gradient(180deg,#09111b,#0b1020);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
-    a{color:var(--brand)}
-    a:focus,button:focus,input:focus,select:focus,summary:focus{outline:none;box-shadow:var(--focus);border-radius:8px}
-    header{position:sticky;top:0;backdrop-filter:saturate(120%) blur(8px);background:rgba(11,16,32,.7);border-bottom:1px solid var(--border);z-index:10}
-    .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-    .nav{display:flex;align-items:center;gap:16px;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
-    .brand svg{width:28px;height:28px}
-    .brand strong{font-weight:700}
-    .grow{flex:1}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);background:#121a26;color:var(--text);border-radius:10px;cursor:pointer;text-decoration:none}
-    .btn:hover{background:#152030}
-    .primary{background:linear-gradient(180deg,#10263a,#0f1e30);border-color:#1e3046}
-    .primary:hover{background:linear-gradient(180deg,#14324d,#14283f)}
-    .hero{padding:72px 0 28px;border-bottom:1px solid var(--border)}
-    .hero h1{font-size:38px;line-height:1.1;margin:0 0 12px}
-    .hero p{max-width:720px;color:var(--muted);margin:0}
-    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:#0d141d;color:var(--muted);font-size:12px}
-    .section{padding:28px 0}
-    .grid{display:grid;gap:18px}
-    @media (min-width:900px){ .grid-2{grid-template-columns:1.1fr .9fr;} .grid-3{grid-template-columns:repeat(3,1fr);} }
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
-    h2{margin:0 0 12px;font-size:22px}
-    .mini{font-size:13px;color:var(--muted)}
-    .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;border:1px solid #273142;background:#0d141d}
-    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
-    details{background:#0c121a;border:1px solid #17202c;border-radius:12px;padding:12px}
-    pre{background:#0b1017;border:1px solid #17202c;border-radius:8px;padding:12px;overflow:auto}
-    footer{border-top:1px solid var(--border);padding:24px 0;color:var(--muted)}
-    .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
-    .drop.hover{background:#102338}
-    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    #file{display:block;margin:8px auto 0}
-    .range{display:flex;gap:10px;align-items:center}
-    input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
-    .live{min-height:1.3em;margin-top:8px}
-    /* Blog */
-    .post h3{margin:.2rem 0 0;font-weight:600}
-    .post time{color:var(--muted);font-size:13px}
-    .post p{margin:.5rem 0}
-    .post ul{margin:.5rem 0 0 1.1rem}
-    .post blockquote{margin:.8rem 0;padding:.8rem;border-left:4px solid #264968;background:#0c151f;color:#cfe3ff;border-radius:8px}
-  </style>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%230B1020'/%3E%3Cpath fill='%233B82F6' d='M48 176h96a40 40 0 0 0 0-80H96l24-24H88l-40 40v16h16v48zM176 80h32v16h-32zM176 112h32v16h-32z'/%3E%3C/svg%3E" />
+  <link rel="canonical" href="https://accessr.net/" />
+  <meta property="og:title" content="Accessr — Free Accessibility Checker & Fixer for Word (.docx)" />
+  <meta property="og:description" content="Privacy-first .docx accessibility checker that runs fully in your browser." />
+  <meta property="og:url" content="https://accessr.net/" />
+  <meta property="og:type" content="website" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>/* Fallback if /assets/style.css is missing */html{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif} .container{max-width:1100px;margin:0 auto;padding:24px} .btn{display:inline-block;padding:.75rem 1rem;border-radius:.75rem;background:#2563eb;color:#fff;text-decoration:none} .btn:hover{opacity:.95} .muted{color:#5b6472} header{position:sticky;top:0;background:#0b1020;color:#e6edf7;box-shadow:0 2px 12px rgba(0,0,0,.1)} header a{color:#cfe1ff;text-decoration:none} nav a{margin-right:1rem} .hero{padding:56px 0} .card{background:#0b10200a;border:1px solid #0b102013;border-radius:16px;padding:20px} footer{color:#7a8699;padding:40px 0} </style>
 </head>
 <body>
-  <header role="banner">
-    <div class="wrap nav" aria-label="Site header">
-      <a class="brand" href="#home" aria-label="Accessr Home">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-hidden="true">
-          <rect width="256" height="256" rx="48" fill="#0B1020"/>
-          <path fill="#3B82F6" d="M48 176h96a40 40 0 0 0 0-80H96l24-24-16-16-56 56 56 56 16-16-24-24h48a24 24 0 1 1 0 48H48z"/>
-          <circle cx="196" cy="92" r="10" fill="#10B981"/>
-        </svg>
-        <strong>Accessr</strong>
+  <header>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/" style="display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.05rem">
+        <span style="width:28px;height:28px;display:inline-grid;place-items:center;background:#3b82f6;color:#fff;border-radius:8px">A</span>
+        Accessr
       </a>
-      <div class="grow"></div>
-      <a class="btn" href="#tool">Launch tool</a>
-      <a class="btn" href="#examples">Examples</a>
-      <a class="btn" href="#blog">Blog</a>
-      <a class="btn" href="#faq">FAQ</a>
-      <a class="btn primary" href="#privacy">Privacy</a>
+      <nav aria-label="Primary">
+        <a href="/#tool">Tool</a>
+        <a href="/blog/">Blog</a>
+        <a href="/#privacy">Privacy</a>
+      </nav>
     </div>
   </header>
 
-  <section class="wrap hero" id="home">
-    <span class="chip">Free • Runs in your browser • No uploads</span>
-    <h1>Make your Word documents accessible — in minutes, not days.</h1>
-    <p>Upload a <strong>.docx</strong>, run checks, auto-fix common issues, and download a cleaned file plus an audit report — all without your document ever leaving your device.</p>
-    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-      <a class="btn primary" href="#tool" aria-label="Jump to tool">Get started</a>
-      <a class="btn" href="#how">How it works</a>
-    </div>
-  </section>
-
-  <section class="wrap section grid grid-2" id="tool" aria-label="Accessibility tool">
-    <div class="card" aria-labelledby="upload-h">
-      <h2 id="upload-h">Check & Fix your .docx</h2>
-      <p class="mini">Built for government, business, higher-ed, and community groups. No signup. No servers.</p>
-
-      <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
-        <p><strong>Drag & drop</strong> your file here, or</p>
-        <button id="chooseBtn" type="button" class="btn">Choose a file</button>
-        <input id="file" type="file" accept=".docx" />
-        <p class="mini" id="filename" aria-live="polite"></p>
-
-        <!-- SAMPLE BUTTONS -->
-        <div class="mini" style="margin-top:12px">
-          <p style="margin:0 0 6px">No file handy? Try a sample:</p>
-          <a class="btn" href="samples/marketing-brief-before.docx" download>Example 1 — Marketing Brief (Before)</a>
-          <a class="btn" href="samples/marketing-brief-after.docx" download>Example 1 — Marketing Brief (After)</a>
-          <a class="btn" href="samples/policy-extract-before.docx" download>Example 2 — Policy Extract (Before)</a>
-          <a class="btn" href="samples/policy-extract-after.docx" download>Example 2 — Policy Extract (After)</a>
-          <p class="mini" style="margin-top:6px">“Before” docs include fake headings, raw URLs, tiny text, and tables without headers. “After” versions show the accessible structure.</p>
-        </div>
-
-        <div class="mini" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px">
-          <label style="display:flex;gap:8px;align-items:center"><input id="fixImgAlt" type="checkbox" checked /> Fix: Add placeholder image alt</label>
-          <label style="display:flex;gap:8px;align-items:center"><input id="fixTblHdr" type="checkbox" checked /> Fix: Mark first table row as header</label>
-          <label style="display:flex;gap:8px;align-items:center"><input id="fixLang"   type="checkbox" checked /> Fix: Add run language if missing</label>
-          <label style="display:flex;gap:8px;align-items:center"><input id="fixHead"   type="checkbox" /> Fix: Convert obvious fake headings → Heading 2</label>
-          <label style="display:flex;gap:8px;align-items:center"><input id="fixSize"   type="checkbox" /> Fix: Raise tiny font to minimum</label>
-          <label style="display:flex;gap:8px;align-items:center"><input id="fixList"   type="checkbox" /> Fix: Convert fake bullets to real list style</label>
-        </div>
-
-        <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
-          <label style="display:flex;gap:8px;align-items:center">
-            <input id="safeTouch" type="checkbox" checked />
-            <span>Use SafeTouch (recommended)</span>
-          </label>
-          <label style="display:flex;gap:8px;align-items:center">
-            <input id="compat" type="checkbox" checked />
-            <span>Compat: preserve namespaces/root (fxp mode)</span>
-          </label>
-        </div>
-        <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
-      </div>
-
-      <div class="controls" role="group" aria-label="Options">
-        <div class="range">
-          <label for="lang" class="mini">Default language</label>
-          <select id="lang" aria-label="Default language for runs">
-            <option value="en-AU">English (Australia)</option>
-            <option value="en-GB">English (UK)</option>
-            <option value="en-US">English (US)</option>
-          </select>
-        </div>
-        <div class="range">
-          <label for="minFont" class="mini">Min font (pt)</label>
-          <input id="minFont" type="number" min="10" max="16" step="1" value="11" />
-        </div>
-      </div>
-
-      <div class="controls">
-        <button id="runBtn" class="btn primary" disabled aria-disabled="true">Run checks</button>
-        <a id="dlFixed" class="btn" style="display:none" download>Download fixed .docx</a>
-        <a id="dlReport" class="btn" style="display:none" download>Download report.md</a>
-      </div>
-      <div id="status" class="live" aria-live="polite"></div>
-
-      <div id="diag" class="mini" style="margin-top:10px; border:1px solid #1b2430; border-radius:10px; padding:10px; background:#0c121a; display:none">
-        <div><strong>Diagnostics</strong></div>
-        <div id="diagLib">• Libraries: <em>checking…</em></div>
-        <div id="diagFile">• File: <em>none selected</em></div>
-        <div id="diagReady">• Ready: <em>no</em></div>
-        <div id="diagErr" style="color:#ff6b6b; margin-top:6px;"></div>
-      </div>
+  <main class="container hero">
+    <h1 style="font-size:clamp(1.6rem,3vw,2.4rem);margin:0 0 .75rem 0;">Free, privacy‑first accessibility checker for Word (.docx)</h1>
+    <p class="muted" style="max-width:70ch">Accessr checks and fixes common accessibility issues in your .docx — entirely in your browser. <strong>No uploads, no accounts, no data collection.</strong></p>
+    <div style="margin-top:1rem">
+      <a class="btn" href="#tool">Open the tool</a>
+      <a class="btn" href="/blog/" style="background:#0b1020;border:1px solid #253046">Read the blog</a>
     </div>
 
-    <div class="card" aria-labelledby="results-h">
-      <h2 id="results-h">Results</h2>
-      <div id="summary" class="mini" style="margin-bottom:8px"></div>
-      <details>
-        <summary>Show raw report (Markdown)</summary>
-        <pre id="rawReport"></pre>
-      </details>
-      <div style="margin-top:12px">
-        <span class="pill"><span class="ok">✅</span> Fixed</span>
-        <span class="pill"><span class="warn">•</span> Needs review</span>
+    <!-- MERGED TOOL SECTION START -->
+    <section class="wrap section grid grid-2" id="tool" aria-label="Accessibility tool" style="padding-left:0;padding-right:0">
+      <style>
+        #tool .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;border:1px solid #273142;background:#0d141d}
+        #tool .ok{color:#34d399} #tool .warn{color:#ffcc00} #tool .err{color:#ff6b6b}
+        #tool .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
+        #tool .drop.hover{background:#102338}
+        #tool .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+        #tool .range{display:flex;gap:10px;align-items:center}
+        #tool input[type="number"], #tool select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:inherit}
+        #tool .mini{font-size:13px;opacity:.9}
+        #tool details{background:#0c121a;border:1px solid #17202c;border-radius:12px;padding:12px}
+        #tool pre{background:#0b1017;border:1px solid #17202c;border-radius:8px;padding:12px;overflow:auto}
+      </style>
+
+      <!-- LEFT CARD: upload + options + actions -->
+      <div class="card" aria-labelledby="upload-h">
+        <h2 id="upload-h">Check & Fix your .docx</h2>
+        <p class="mini">Built for government, business, higher-ed, and community groups. No signup. No servers.</p>
+
+        <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
+          <p><strong>Drag & drop</strong> your file here, or</p>
+          <button id="chooseBtn" type="button" class="btn">Choose a file</button>
+          <input id="file" type="file" accept=".docx" />
+          <p class="mini" id="filename" aria-live="polite"></p>
+
+          <!-- SAMPLE BUTTONS (optional) -->
+          <div class="mini" style="margin-top:12px">
+            <p style="margin:0 0 6px">No file handy? Try a sample:</p>
+            <a class="btn" href="samples/marketing-brief-before.docx" download>Example 1 — Marketing Brief (Before)</a>
+            <a class="btn" href="samples/marketing-brief-after.docx" download>Example 1 — Marketing Brief (After)</a>
+            <a class="btn" href="samples/policy-extract-before.docx" download>Example 2 — Policy Extract (Before)</a>
+            <a class="btn" href="samples/policy-extract-after.docx" download>Example 2 — Policy Extract (After)</a>
+            <p class="mini" style="margin-top:6px">“Before” docs include fake headings, raw URLs, tiny text, and tables without headers. “After” versions show the accessible structure.</p>
+          </div>
+
+          <div class="mini" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px">
+            <label style="display:flex;gap:8px;align-items:center"><input id="fixImgAlt" type="checkbox" checked /> Fix: Add placeholder image alt</label>
+            <label style="display:flex;gap:8px;align-items:center"><input id="fixTblHdr" type="checkbox" checked /> Fix: Mark first table row as header</label>
+            <label style="display:flex;gap:8px;align-items:center"><input id="fixLang"   type="checkbox" checked /> Fix: Add run language if missing</label>
+            <label style="display:flex;gap:8px;align-items:center"><input id="fixHead"   type="checkbox" /> Fix: Convert obvious fake headings → Heading 2</label>
+            <label style="display:flex;gap:8px;align-items:center"><input id="fixSize"   type="checkbox" /> Fix: Raise tiny font to minimum</label>
+            <label style="display:flex;gap:8px;align-items:center"><input id="fixList"   type="checkbox" /> Fix: Convert fake bullets to real list style</label>
+          </div>
+
+          <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
+            <label style="display:flex;gap:8px;align-items:center">
+              <input id="safeTouch" type="checkbox" checked />
+              <span>Use SafeTouch (recommended)</span>
+            </label>
+            <label style="display:flex;gap:8px;align-items:center">
+              <input id="compat" type="checkbox" checked />
+              <span>Compat: preserve namespaces/root (fxp mode)</span>
+            </label>
+          </div>
+          <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
+        </div>
+
+        <div class="controls" role="group" aria-label="Options">
+          <div class="range">
+            <label for="lang" class="mini">Default language</label>
+            <select id="lang" aria-label="Default language for runs">
+              <option value="en-AU">English (Australia)</option>
+              <option value="en-GB">English (UK)</option>
+              <option value="en-US">English (US)</option>
+            </select>
+          </div>
+          <div class="range">
+            <label for="minFont" class="mini">Min font (pt)</label>
+            <input id="minFont" type="number" min="10" max="16" step="1" value="11" />
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="runBtn" class="btn primary" disabled aria-disabled="true">Run checks</button>
+          <a id="dlFixed" class="btn" style="display:none" download>Download fixed .docx</a>
+          <a id="dlReport" class="btn" style="display:none" download>Download report.md</a>
+        </div>
+        <div id="status" class="live" aria-live="polite"></div>
+
+        <div id="diag" class="mini" style="margin-top:10px; border:1px solid #1b2430; border-radius:10px; padding:10px; background:#0c121a; display:none">
+          <div><strong>Diagnostics</strong></div>
+          <div id="diagLib">• Libraries: <em>checking…</em></div>
+          <div id="diagFile">• File: <em>none selected</em></div>
+          <div id="diagReady">• Ready: <em>no</em></div>
+          <div id="diagErr" style="color:#ff6b6b; margin-top:6px;"></div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <section class="wrap section grid grid-3" id="how" aria-label="How it works">
-    <div class="card"><h2>1) Upload</h2><p>Select a <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> or drag it in. Your document is processed locally and never leaves your device.</p></div>
-    <div class="card"><h2>2) Check & Fix</h2><p>We flag common issues: fake headings & skipped levels, tiny text, missing image alt text, fake bullets, missing table headers, raw URLs, & missing language. Safe auto-fixes are applied if enabled.</p></div>
-    <div class="card"><h2>3) Download</h2><p>Grab a cleaned <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> and a Markdown report for your records or internal QA workflows.</p></div>
-  </section>
+      <!-- RIGHT CARD: results -->
+      <div class="card" aria-labelledby="results-h">
+        <h2 id="results-h">Results</h2>
+        <div id="summary" class="mini" style="margin-bottom:8px"></div>
+        <details>
+          <summary>Show raw report (Markdown)</summary>
+          <pre id="rawReport"></pre>
+        </details>
+        <div style="margin-top:12px">
+          <span class="pill"><span class="ok">✅</span> Fixed</span>
+          <span class="pill"><span class="warn">•</span> Needs review</span>
+        </div>
+      </div>
+    </section>
+    <!-- MERGED TOOL SECTION END -->
 
-  <section class="wrap section" id="features" aria-label="Key features">
-    <div class="card">
-      <h2>What gets checked & fixed</h2>
-      <ul style="display:grid;gap:12px" role="list">
-        <li><strong>Headings</strong> — detect fake headings & level skips; convert obvious fakes → <code>Heading 2</code>.</li>
-        <li><strong>Text size</strong> — flag runs below your size floor (default 11pt) and raise them.</li>
-        <li><strong>Images</strong> — flag missing alt; add placeholder <em>“IMAGE – add descriptive alt text”</em>.</li>
-        <li><strong>Lists</strong> — convert “- ” / “• ” into real list styling (conservative & safe).</li>
-        <li><strong>Tables</strong> — mark likely header rows to repeat for better export.</li>
-        <li><strong>Links</strong> — flag raw URLs; recommend descriptive link text.</li>
-        <li><strong>Language</strong> — set run language if missing (e.g., <code>en-AU</code>).</li>
-      </ul>
-      <p class="mini">Note: Full WCAG conformance depends on your final web format; this prepares Word docs for cleaner export (Word HTML / Mammoth / Pandoc).</p>
-    </div>
-  </section>
-
-  <!-- Examples section -->
-  <section class="wrap section" id="examples" aria-label="Examples">
-    <div class="card">
-      <h2>Examples</h2>
-      <p>See how Accessr improves document accessibility from “Before” to “After”.</p>
+    <section id="privacy" style="margin-top:56px">
+      <h2>Privacy & Security</h2>
       <ul>
-        <li><strong>Headings:</strong> Fake headings → true Heading styles (H1/H2).</li>
-        <li><strong>Lists:</strong> Fake bullets → list paragraph styling.</li>
-        <li><strong>Tables:</strong> First row marked as <code>Header</code> for better export.</li>
-        <li><strong>Images:</strong> Placeholder alt text added where missing.</li>
-        <li><strong>Language/Size:</strong> Run language tags and minimum font size normalized.</li>
+        <li>All processing happens in your browser (client‑side).</li>
+        <li>No uploads, no cookies for tracking, no analytics by default.</li>
+        <li>Add your preferred privacy‑friendly analytics later if desired (e.g., Plausible, Fathom).</li>
       </ul>
-      <p>
-        <a class="btn" href="samples/marketing-brief-before.docx" download>Marketing Brief — Before</a>
-        <a class="btn" href="samples/marketing-brief-after.docx" download>Marketing Brief — After</a>
-        <a class="btn" href="samples/policy-extract-before.docx" download>Policy Extract — Before</a>
-        <a class="btn" href="samples/policy-extract-after.docx" download>Policy Extract — After</a>
-      </p>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <!-- Blog -->
-  <section class="wrap section" id="blog" aria-label="Blog">
-    <div class="card post" itemscope itemtype="https://schema.org/BlogPosting">
-      <h2 itemprop="headline">Introducing Accessr: a free, privacy-first Word accessibility fixer (that runs in your browser)</h2>
-      <div class="mini">
-        <time itemprop="datePublished" datetime="2025-11-07">7 Nov 2025</time> · <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Accessr</span></span>
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <small>© <span id="year"></span> Accessr</small>
+        <nav aria-label="Footer">
+          <a href="/blog/">Blog</a>
+          <span aria-hidden="true">·</span>
+          <a href="#privacy">Privacy</a>
+        </nav>
       </div>
-
-      <p itemprop="description">Accessibility checks for Word files usually mean exporting to PDF, running paid scanners, or handing sensitive documents to a third-party service. Accessr flips that model: everything runs locally in your browser — no uploads, no sign-up, no data collection.</p>
-
-      <h3>What Accessr does</h3>
-      <ul>
-        <li>Detects <strong>fake headings</strong> and level skips; converts obvious fakes to real heading styles (optional).</li>
-        <li>Flags <strong>tiny text</strong> and can raise it to your minimum point size.</li>
-        <li>Finds images without <strong>alt text</strong>; inserts a clear placeholder reminder.</li>
-        <li>Turns “• ” / “- ” lines into <strong>real lists</strong> (safe, conservative).</li>
-        <li>Marks likely <strong>table header rows</strong> so they repeat correctly when exported.</li>
-        <li>Sets <strong>language</strong> on runs if missing (e.g., <code>en-AU</code>).</li>
-      </ul>
-
-      <blockquote>Accessr is not a WCAG certification service. It prepares Word documents for cleaner export (Word HTML/Mammoth/Pandoc) and faster human review. Final conformance always depends on your published format and context.</blockquote>
-
-      <h3>Why privacy-first?</h3>
-      <p>Government, universities and businesses handle sensitive drafts. Accessr never sends your file anywhere — it uses Web APIs to open, check and rewrite the <code>.docx</code> directly in your browser. You can even save this page and run it offline.</p>
-
-      <h3>Try it in under a minute</h3>
-      <ol>
-        <li>Scroll to <a href="#tool">Launch tool</a>.</li>
-        <li>Pick a <strong>.docx</strong> or download a sample from <a href="#examples">Examples</a>.</li>
-        <li>Press <em>Run checks</em> and download your <em>fixed .docx</em> and <em>report.md</em>.</li>
-      </ol>
-
-      <h3>Roadmap</h3>
-      <ul>
-        <li>Smarter heading detection (across headers/footers, styles inference).</li>
-        <li>Numbering model for proper ordered lists.</li>
-        <li>Optional export to HTML with an a11y pass.</li>
-      </ul>
-
-      <p>Questions or feedback? Open an issue on GitHub or drop us a line. If your organisation has strict review requirements, you can fork the site and host it internally.</p>
     </div>
-  </section>
+  </footer>
 
-  <section class="wrap section" id="faq" aria-label="Frequently asked questions">
-    <div class="card">
-      <h2>FAQ</h2>
-      <details>
-        <summary>Does my file get uploaded to a server?</summary>
-        <p>No. Everything runs in your browser using Web APIs. Your file never leaves your device.</p>
-      </details>
-      <details>
-        <summary>What kinds of issues can’t be fully checked?</summary>
-        <p>Color contrast and complex shapes/SmartArt are limited in Word’s XML. This tool flags likely problems but can’t guarantee full WCAG compliance without exporting to HTML and running a web a11y scanner.</p>
-      </details>
-      <details>
-        <summary>Can I process confidential documents?</summary>
-        <p>Yes—because processing is local. Always follow your organisation’s policies.</p>
-      </details>
-      <details>
-        <summary>Will you add true numbered/bulleted lists?</summary>
-        <p>This MVP applies safe list styling. Advanced numbering (editing <code>word/numbering.xml</code>) can be added if you want a more opinionated fix pass.</p>
-      </details>
-    </div>
-  </section>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
-  <section class="wrap section" id="privacy" aria-label="Privacy policy">
-    <div class="card">
-      <h2>Privacy</h2>
-      <p>We do not collect, transmit, or store your documents. All processing happens locally in your browser. If you host this page yourself, review any third-party analytics you add to ensure they do not capture document contents.</p>
-    </div>
-  </section>
-
-  <!-- Early safety wiring -->
+  <!-- Early safety wiring (keep as-is) -->
   <script>
   (function(){
     const chooseBtn = document.getElementById('chooseBtn');
@@ -326,31 +201,31 @@
   })();
   </script>
 
-  <!-- Local libraries -->
+  <!-- Vendor libraries (make sure these files exist in /vendor) -->
   <script src="./vendor/jszip.min.js"></script>
   <script src="./vendor/fxp.min.js"></script>
   <script src="./vendor/FileSaver.min.js"></script>
+
+  <!-- FXP availability note -->
   <script>
-    (function(){
-      const hasFxpNS = !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder);
-      const hasGlobal = !!(window.XMLParser && window.XMLBuilder);
-      const ok = !!window.JSZip && !!(hasFxpNS || hasGlobal) && !!window.saveAs;
-      window.__XMLParserCtor  = hasFxpNS ? window.fxp.XMLParser  : (hasGlobal ? window.XMLParser  : null);
-      window.__XMLBuilderCtor = hasFxpNS ? window.fxp.XMLBuilder : (hasGlobal ? window.XMLBuilder : null);
-      const diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
-      if (diag) diag.style.display = 'block';
-      if (diagLib) {
-        diagLib.innerHTML = ok
-          ? '• Libraries: <span style="color:#34d399">OK (local)</span> — (local)'
-          : '• Libraries: <span style="color:#ff6b6b">Missing /vendor files (jszip.min.js, fxp.min.js, FileSaver.min.js)</span>';
-      }
-    })();
+  (function(){
+    const hasFxpNS = !!(window.fxp && window.fxp.XMLParser && window.fxp.XMLBuilder);
+    const hasGlobal = !!(window.XMLParser && window.XMLBuilder);
+    const ok = !!window.JSZip && !!(hasFxpNS || hasGlobal) && !!window.saveAs;
+    window.__XMLParserCtor  = hasFxpNS ? window.fxp.XMLParser  : (hasGlobal ? window.XMLParser  : null);
+    window.__XMLBuilderCtor = hasFxpNS ? window.fxp.XMLBuilder : (hasGlobal ? window.XMLBuilder : null);
+    const diag = document.getElementById('diag'), diagLib = document.getElementById('diagLib');
+    if (diag) diag.style.display = 'block';
+    if (diagLib) {
+      diagLib.innerHTML = ok
+        ? '• Libraries: <span style="color:#34d399">OK (local)</span> — (local)'
+        : '• Libraries: <span style="color:#ff6b6b">Missing /vendor files (jszip.min.js, fxp.min.js, FileSaver.min.js)</span>';
+    }
+  })();
   </script>
 
-  <!-- App -->
+  <!-- App logic (from your original page) -->
   <script>
-    document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
-
     // utils
     function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
 
@@ -563,9 +438,9 @@
       let currentFile=null;
 
       function showDiag(){ if(diagWrap) diagWrap.style.display='block'; }
-      function setDiagLib(ok,msg){ showDiag(); if(!diagLib) return; diagLib.innerHTML='• Libraries: '+(ok?'<span style="color:#34d399">OK (local)</span>':'<span style="color:#ff6b6b">Missing</span>')+(msg?' — '+msg:''); }
+      function setDiagLib(ok,msg){ showDiag(); if(!diagLib) return; diagLib.innerHTML='• Libraries: '+(ok?'<span style=\"color:#34d399\">OK (local)</span>':'<span style=\"color:#ff6b6b\">Missing</span>')+(msg?' — '+msg:''); }
       function setDiagFile(text){ showDiag(); if(diagFile) diagFile.innerHTML='• File: '+text; }
-      function setDiagReady(ok){ showDiag(); if(diagReady) diagReady.innerHTML='• Ready: '+(ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
+      function setDiagReady(ok){ showDiag(); if(diagReady) diagReady.innerHTML='• Ready: '+(ok?'<span style=\"color:#34d399\">yes</span>':'<span style=\"color:#ffcc00\">no</span>'); }
       function setDiagErr(text){ showDiag(); if(diagErr) diagErr.textContent=text||''; }
 
       function looksLikeDocx(f){ if(!f) return false; const nameOk=/\.docx$/i.test(f.name||''); const mimeOk=(f.type||'').indexOf('officedocument.wordprocessingml.document')!==-1; return nameOk || mimeOk; }
@@ -578,7 +453,7 @@
         statusEl.textContent=currentFile?'Ready to process.':'';
         dlFixed.style.display='none'; dlReport.style.display='none';
         rawReport.textContent=''; summary.textContent='';
-        setDiagFile(currentFile?('<span style="color:#34d399">'+currentFile.name+'</span> ('+(currentFile.type||'')+', '+(currentFile.size||0)+' bytes)'):'<em>none selected</em>');
+        setDiagFile(currentFile?('<span style=\"color:#34d399\">'+currentFile.name+'</span> ('+(currentFile.type||'')+', '+(currentFile.size||0)+' bytes)'):'<em>none selected</em>');
         setDiagReady(!!currentFile);
       }
 
@@ -675,12 +550,5 @@
       });
     })();
   </script>
-
-  <footer role="contentinfo">
-    <div class="wrap">
-      <div>© <span id="year"></span> Accessr</div>
-      <div class="mini">Free, client-side accessibility checker for Word documents.</div>
-    </div>
-  </footer>
 </body>
 </html>
