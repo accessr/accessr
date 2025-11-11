@@ -1,4 +1,4 @@
-<!doctype html>
+!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -79,6 +79,7 @@
     </div>
   </header>
 
+
   <section class="wrap hero" id="home">
     <span class="chip">Free • Runs in your browser • No uploads</span>
     <h1>Make your Word documents accessible — in minutes, not days.</h1>
@@ -89,16 +90,19 @@
     </div>
   </section>
 
+
   <section class="wrap section grid grid-2" id="tool" aria-label="Accessibility tool">
     <div class="card" aria-labelledby="upload-h">
       <h2 id="upload-h">Check & Fix your .docx</h2>
       <p class="mini">Built for government, business, higher-ed, and community groups. No signup. No servers.</p>
+
 
       <div class="drop" id="drop" tabindex="0" role="region" aria-label="Drop zone — drop a .docx file here">
         <p><strong>Drag & drop</strong> your file here, or</p>
         <button id="chooseBtn" type="button" class="btn">Choose a file</button>
         <input id="file" type="file" accept=".docx" />
         <p class="mini" id="filename" aria-live="polite"></p>
+
 
         <!-- SAMPLE BUTTONS -->
         <div class="mini" style="margin-top:12px">
@@ -110,6 +114,7 @@
           <p class="mini" style="margin-top:6px">“Before” docs include fake headings, raw URLs, tiny text, and tables without headers. “After” versions show the accessible structure.</p>
         </div>
 
+
         <div class="mini" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px">
           <label style="display:flex;gap:8px;align-items:center"><input id="fixImgAlt" type="checkbox" checked /> Fix: Add placeholder image alt</label>
           <label style="display:flex;gap:8px;align-items:center"><input id="fixTblHdr" type="checkbox" checked /> Fix: Mark first table row as header</label>
@@ -118,6 +123,7 @@
           <label style="display:flex;gap:8px;align-items:center"><input id="fixSize"   type="checkbox" /> Fix: Raise tiny font to minimum</label>
           <label style="display:flex;gap:8px;align-items:center"><input id="fixList"   type="checkbox" /> Fix: Convert fake bullets to real list style</label>
         </div>
+
 
         <div class="mini" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
           <label style="display:flex;gap:8px;align-items:center">
@@ -131,6 +137,7 @@
         </div>
         <div id="debug" class="mini" style="margin-top:8px;display:none"></div>
       </div>
+
 
       <div class="controls" role="group" aria-label="Options">
         <div class="range">
@@ -147,12 +154,14 @@
         </div>
       </div>
 
+
       <div class="controls">
         <button id="runBtn" class="btn primary" disabled aria-disabled="true">Run checks</button>
         <a id="dlFixed" class="btn" style="display:none" download>Download fixed .docx</a>
         <a id="dlReport" class="btn" style="display:none" download>Download report.md</a>
       </div>
       <div id="status" class="live" aria-live="polite"></div>
+
 
       <div id="diag" class="mini" style="margin-top:10px; border:1px solid #1b2430; border-radius:10px; padding:10px; background:#0c121a; display:none">
         <div><strong>Diagnostics</strong></div>
@@ -162,6 +171,7 @@
         <div id="diagErr" style="color:#ff6b6b; margin-top:6px;"></div>
       </div>
     </div>
+
 
     <div class="card" aria-labelledby="results-h">
       <h2 id="results-h">Results</h2>
@@ -177,11 +187,13 @@
     </div>
   </section>
 
+
   <section class="wrap section grid grid-3" id="how" aria-label="How it works">
     <div class="card"><h2>1) Upload</h2><p>Select a <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> or drag it in. Your document is processed locally and never leaves your device.</p></div>
     <div class="card"><h2>2) Check & Fix</h2><p>We flag common issues: fake headings & skipped levels, tiny text, missing image alt text, fake bullets, missing table headers, raw URLs, & missing language. Safe auto-fixes are applied if enabled.</p></div>
     <div class="card"><h2>3) Download</h2><p>Grab a cleaned <span style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">.docx</span> and a Markdown report for your records or internal QA workflows.</p></div>
   </section>
+
 
   <section class="wrap section" id="features" aria-label="Key features">
     <div class="card">
@@ -198,6 +210,7 @@
       <p class="mini">Note: Full WCAG conformance depends on your final web format; this prepares Word docs for cleaner export (Word HTML / Mammoth / Pandoc).</p>
     </div>
   </section>
+
 
   <!-- Examples section -->
   <section class="wrap section" id="examples" aria-label="Examples">
@@ -220,6 +233,7 @@
     </div>
   </section>
 
+
   <!-- Blog -->
   <section class="wrap section" id="blog" aria-label="Blog">
     <div class="card post" itemscope itemtype="https://schema.org/BlogPosting">
@@ -228,7 +242,9 @@
         <time itemprop="datePublished" datetime="2025-11-07">7 Nov 2025</time> · <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Accessr</span></span>
       </div>
 
+
       <p itemprop="description">Accessibility checks for Word files usually mean exporting to PDF, running paid scanners, or handing sensitive documents to a third-party service. Accessr flips that model: everything runs locally in your browser — no uploads, no sign-up, no data collection.</p>
+
 
       <h3>What Accessr does</h3>
       <ul>
@@ -240,10 +256,13 @@
         <li>Sets <strong>language</strong> on runs if missing (e.g., <code>en-AU</code>).</li>
       </ul>
 
+
       <blockquote>Accessr is not a WCAG certification service. It prepares Word documents for cleaner export (Word HTML/Mammoth/Pandoc) and faster human review. Final conformance always depends on your published format and context.</blockquote>
+
 
       <h3>Why privacy-first?</h3>
       <p>Government, universities and businesses handle sensitive drafts. Accessr never sends your file anywhere — it uses Web APIs to open, check and rewrite the <code>.docx</code> directly in your browser. You can even save this page and run it offline.</p>
+
 
       <h3>Try it in under a minute</h3>
       <ol>
@@ -252,6 +271,7 @@
         <li>Press <em>Run checks</em> and download your <em>fixed .docx</em> and <em>report.md</em>.</li>
       </ol>
 
+
       <h3>Roadmap</h3>
       <ul>
         <li>Smarter heading detection (across headers/footers, styles inference).</li>
@@ -259,9 +279,11 @@
         <li>Optional export to HTML with an a11y pass.</li>
       </ul>
 
+
       <p>Questions or feedback? Open an issue on GitHub or drop us a line. If your organisation has strict review requirements, you can fork the site and host it internally.</p>
     </div>
   </section>
+
 
   <section class="wrap section" id="faq" aria-label="Frequently asked questions">
     <div class="card">
@@ -285,12 +307,14 @@
     </div>
   </section>
 
+
   <section class="wrap section" id="privacy" aria-label="Privacy policy">
     <div class="card">
       <h2>Privacy</h2>
       <p>We do not collect, transmit, or store your documents. All processing happens locally in your browser. If you host this page yourself, review any third-party analytics you add to ensure they do not capture document contents.</p>
     </div>
   </section>
+
 
   <!-- Early safety wiring -->
   <script>
@@ -304,9 +328,11 @@
     const diagReady = document.getElementById('diagReady');
     const debugEl = document.getElementById('debug');
 
+
     function dbg(msg){ if(!debugEl) return; debugEl.style.display='block'; debugEl.textContent=String(msg); }
     function setDiagFile(text){ if(diagWrap) diagWrap.style.display='block'; if(diagFile) diagFile.innerHTML='• File: ' + text; }
-    function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="#ffcc00">no</span>'); }
+    function setDiagReady(ok){ if(diagWrap) diagWrap.style.display='block'; if(diagReady) diagReady.innerHTML='• Ready: ' + (ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
+
 
     function onPick(f){
       window.__accessrSelectedFile = f || null;
@@ -319,12 +345,14 @@
       } else { setDiagFile('<em>none selected</em>'); setDiagReady(false); }
     }
 
+
     if (chooseBtn && fileInput){
       chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
       fileInput.addEventListener('change', function(){ onPick((fileInput.files && fileInput.files[0]) || null); });
     }
   })();
   </script>
+
 
   <!-- Local libraries -->
   <script src="./vendor/jszip.min.js"></script>
@@ -347,12 +375,17 @@
     })();
   </script>
 
+
   <!-- App -->
   <script>
     document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
 
+
+    // utils
     function ensureArray(x){ return Array.isArray(x) ? x : (x == null ? [] : [x]); }
 
+
+    // report builder
     function makeReport(fileName){
       return {
         file: fileName || '(untitled)',
@@ -374,6 +407,8 @@
       };
     }
 
+
+    // SafeTouch DOM-based minimal edits
     function xmlToDom(xml){
       const dom = new DOMParser().parseFromString(xml, 'application/xml');
       const err = dom.querySelector('parsererror');
@@ -382,11 +417,14 @@
     }
     function domToXml(dom){ return (new XMLSerializer()).serializeToString(dom); }
 
+
     function safeTouch_documentXml(xml, opts, report){
       const dom = xmlToDom(xml);
       const wns = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
       const wps = 'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing';
 
+
+      // 1) Add placeholder image alt text
       if (opts.fixes.imgAlt){
         const docPrs = dom.getElementsByTagNameNS(wps, 'docPr');
         let added=0, total=docPrs.length;
@@ -404,6 +442,8 @@
         }
       }
 
+
+      // 2) Mark first table row as header if it looks like one
       if (opts.fixes.tblHeader){
         const tbls = dom.getElementsByTagNameNS(wns,'tbl');
         let fixed=0;
@@ -437,6 +477,8 @@
         if (fixed>0) report.add('TBL-HEADER->FIX',`Marked first row as a repeating header in ${fixed} table(s).`,'Document',true);
       }
 
+
+      // 3) Set run language where missing
       if (opts.fixes.lang){
         const runs = dom.getElementsByTagNameNS(wns,'r');
         let set=0;
@@ -459,6 +501,8 @@
       return domToXml(dom);
     }
 
+
+    // FXP scaffolding (kept for compatibility switch)
     let parser = null, builder = null, __rawXmlByPart = Object.create(null);
     function graftRootTag(originalXml, rebuiltXml){
       function firstStartTag(xml){
@@ -489,12 +533,15 @@
       } return out;
     }
 
+
+    // Orchestrator
     async function processFile(file, opts){
       const buffer = await file.arrayBuffer();
       const zip = await JSZip.loadAsync(buffer);
       const parts = listWordXmlParts(zip);
       if(!parts.length) throw new Error('No Word XML parts found in document.');
       const report = makeReport(file.name);
+
 
       if (opts.safeTouch){
         for (const name of parts){
@@ -517,6 +564,7 @@
         }
       }
 
+
       const content = await zip.generateAsync({ type:'blob' });
       const fixedBlob = new Blob([content], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       const md = report.toMarkdown();
@@ -524,6 +572,8 @@
       return { report, fixedBlob, reportBlob };
     }
 
+
+    // UI wiring
     (function(){
       const drop=document.getElementById('drop');
       const fileInput=document.getElementById('file');
@@ -551,15 +601,19 @@
       const diagReady=document.getElementById('diagReady');
       const diagErr=document.getElementById('diagErr');
 
+
       let currentFile=null;
 
+
       function showDiag(){ if(diagWrap) diagWrap.style.display='block'; }
-      function setDiagLib(ok,msg){ showDiag(); if(!diagLib) return; diagLib.innerHTML='• Libraries: '+(ok?'<span style=\"color:#34d399\">OK (local)</span>':'<span style=\"color:#ff6b6b\">Missing</span>')+(msg?' — '+msg:''); }
+      function setDiagLib(ok,msg){ showDiag(); if(!diagLib) return; diagLib.innerHTML='• Libraries: '+(ok?'<span style="color:#34d399">OK (local)</span>':'<span style="color:#ff6b6b">Missing</span>')+(msg?' — '+msg:''); }
       function setDiagFile(text){ showDiag(); if(diagFile) diagFile.innerHTML='• File: '+text; }
-      function setDiagReady(ok){ showDiag(); if(diagReady) diagReady.innerHTML='• Ready: '+(ok?'<span style=\"color:#34d399\">yes</span>':'<span style=\"color:#ffcc00\">no</span>'); }
+      function setDiagReady(ok){ showDiag(); if(diagReady) diagReady.innerHTML='• Ready: '+(ok?'<span style="color:#34d399">yes</span>':'<span style="color:#ffcc00">no</span>'); }
       function setDiagErr(text){ showDiag(); if(diagErr) diagErr.textContent=text||''; }
 
+
       function looksLikeDocx(f){ if(!f) return false; const nameOk=/\.docx$/i.test(f.name||''); const mimeOk=(f.type||'').indexOf('officedocument.wordprocessingml.document')!==-1; return nameOk || mimeOk; }
+
 
       function setFile(f){
         currentFile=f;
@@ -569,9 +623,10 @@
         statusEl.textContent=currentFile?'Ready to process.':'';
         dlFixed.style.display='none'; dlReport.style.display='none';
         rawReport.textContent=''; summary.textContent='';
-        setDiagFile(currentFile?('<span style=\"color:#34d399\">'+currentFile.name+'</span> ('+(currentFile.type||'')+', '+(currentFile.size||0)+' bytes)'):'<em>none selected</em>');
+        setDiagFile(currentFile?('<span style="color:#34d399">'+currentFile.name+'</span> ('+(currentFile.type||'')+', '+(currentFile.size||0)+' bytes)'):'<em>none selected</em>');
         setDiagReady(!!currentFile);
       }
+
 
       (function adoptEarlyPick(){
         const early = window.__accessrSelectedFile;
@@ -580,7 +635,9 @@
         if (f) setFile(f);
       })();
 
+
       setDiagLib(!!window.JSZip && !!(window.__XMLParserCtor && window.__XMLBuilderCtor), '(local)');
+
 
       if (chooseBtn && fileInput) chooseBtn.addEventListener('click', function(){ try{ fileInput.click(); }catch(e){} });
       fileInput.addEventListener('change', function(){
@@ -600,23 +657,27 @@
       drop.addEventListener('click', function(e){
         const isBackground = e.target === drop;
         const isChooseBtn  = e.target && (e.target.id === 'chooseBtn');
-        if (isBackground or isChooseBtn) fileInput.click();
+        if (isBackground || isChooseBtn) fileInput.click();
       });
       Array.from(drop.querySelectorAll('input, label, select, button, a')).forEach(el=>{
         el.addEventListener('click', e => e.stopPropagation());
       });
 
+
       window.addEventListener('error', e=> setDiagErr('Script error: '+(e.message||'')));
       window.addEventListener('unhandledrejection', e=> setDiagErr('Unhandled promise: '+(e.reason && e.reason.message ? e.reason.message : String(e.reason || ''))));
+
 
       document.getElementById('runBtn').addEventListener('click', async function(){
         setDiagErr('');
         if(!currentFile){ statusEl.innerHTML="<span class='err'>No file selected.</span>"; return; }
 
+
         runBtn.disabled=true; runBtn.setAttribute('aria-disabled','true');
         statusEl.textContent='Processing… (all on your device)';
         dlFixed.style.display='none'; dlReport.style.display='none';
         rawReport.textContent=''; summary.textContent='';
+
 
         try{
           const opts = {
@@ -628,11 +689,12 @@
               imgAlt: !!(fixImgAlt && fixImgAlt.checked),
               tblHeader: !!(fixTblHdr && fixTblHdr.checked),
               lang: !!(fixLang && fixLang.checked),
-              headings: !!(fixHead && fixHead.checked),
-              fontSize: !!(fixSize && fixSize.checked),
-              list: !!(fixList && fixList.checked),
+              headings: !!(fixHead && fixHead.checked), // fxp-only
+              fontSize: !!(fixSize && fixSize.checked), // fxp-only
+              list: !!(fixList && fixList.checked),     // fxp-only
             }
           };
+
 
           const { report, fixedBlob, reportBlob } = await processFile(currentFile, opts);
           const counts=report.counts();
@@ -641,10 +703,13 @@
             '<span class="pill"><span class="ok">✅</span> Fixed: '+counts.fixed+'</span> '+
             '<span class="pill"><span class="warn">•</span> Needs review: '+counts.flagged+'</span>';
 
+
           rawReport.textContent=report.toMarkdown();
+
 
           const ts=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
           const base=currentFile.name.replace(/\.docx$/i,'')||'document';
+
 
           if(reportBlob){
             const url1=URL.createObjectURL(reportBlob);
@@ -654,6 +719,7 @@
             const url2=URL.createObjectURL(fixedBlob);
             dlFixed.href=url2; dlFixed.download=base+'.fixed-'+ts+'.docx'; dlFixed.style.display='inline-flex';
           }
+
 
           statusEl.textContent='Done. Download your fixed document and report below.';
         }catch(err){
@@ -666,6 +732,7 @@
       });
     })();
   </script>
+
 
   <footer role="contentinfo">
     <div class="wrap">
