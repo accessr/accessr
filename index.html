@@ -47,7 +47,6 @@
     .drop{border:2px dashed #24405d;border-radius:14px;padding:16px;text-align:center;background:#0e1624}
     .drop.hover{background:#102338}
     .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    #file{display:block;margin:8px auto 0}
     .range{display:flex;gap:10px;align-items:center}
     input[type="number"], select{padding:8px 10px;border-radius:10px;border:1px solid #1b2430;background:#0c121a;color:var(--text)}
     .live{min-height:1.3em;margin-top:8px}
@@ -220,66 +219,53 @@
     </div>
   </section>
 
-  <!-- Blog -->
+  <!-- Updated Blog -->
   <section class="wrap section" id="blog" aria-label="Blog">
-    <!-- NEW BLOG POST CARD -->
-    <div class="card post" itemscope itemtype="https://schema.org/BlogPosting">
-      <h2 itemprop="headline">
-        <a href="/blog/why-offer-word-pdf-downloads.html" style="text-decoration:none;color:inherit">
-          Why Governments Should Still Offer Word &amp; PDF Downloads — Even in a Web-First World
-        </a>
-      </h2>
-      <div class="mini">
-        <time itemprop="datePublished" datetime="2025-11-11">11 Nov 2025</time> ·
-        <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-          <span itemprop="name">Accessr</span>
-        </span>
-      </div>
-      <p itemprop="description">
-        Why web-only publishing isn’t always inclusive — and how offering accessible Word or tagged PDF downloads preserves record integrity, accessibility, and transparency.
+    <div class="card">
+      <h2>Blog</h2>
+
+      <!-- New Post 1 -->
+      <article class="post-card" style="margin:12px 0">
+        <h3 style="margin:.2rem 0">
+          <a href="/blog/word-accessibility-checklist-2025.html">
+            How to Make a Word Document Accessible: The Complete 2025 Checklist
+          </a>
+        </h3>
+        <time datetime="2025-11-13" style="color:#9fb0c2;font-size:13px">13 November 2025</time>
+        <p style="margin:.5rem 0">
+          A government-ready 2025 checklist for accessible Word (.docx) documents — headings, alt text, lists, tables, language, links, colour, and exporting.
+        </p>
+      </article>
+
+      <!-- New Post 2 -->
+      <article class="post-card" style="margin:12px 0">
+        <h3 style="margin:.2rem 0">
+          <a href="/blog/pdf-vs-word-accessibility.html">
+            PDF vs Word for Accessibility: Which Format Is Actually Better?
+          </a>
+        </h3>
+        <time datetime="2025-11-13" style="color:#9fb0c2;font-size:13px">13 November 2025</time>
+        <p style="margin:.5rem 0">
+          When to use accessible .docx vs tagged PDF, the export settings that matter, and how to avoid common pitfalls.
+        </p>
+      </article>
+
+      <!-- Existing intro post preserved (optional to keep or remove) -->
+      <article class="post-card" style="margin:12px 0">
+        <h3 style="margin:.2rem 0">
+          <a href="/blog/why-offer-word-pdf-downloads.html">
+            Why Governments Should Still Offer Word &amp; PDF Downloads — Even in a Web-First World
+          </a>
+        </h3>
+        <time datetime="2025-11-11" style="color:#9fb0c2;font-size:13px">11 November 2025</time>
+        <p style="margin:.5rem 0">
+          Why web-only publishing isn’t always inclusive — and how accessible Word or tagged PDF downloads preserve record integrity, accessibility, and transparency.
+        </p>
+      </article>
+
+      <p style="margin-top:16px">
+        <a class="btn" href="/blog/">View all posts</a>
       </p>
-      <p><a class="btn" href="/blog/why-offer-word-pdf-downloads.html">Read article</a></p>
-    </div>
-
-    <!-- EXISTING INTRO POST -->
-    <div class="card post" itemscope itemtype="https://schema.org/BlogPosting">
-      <h2 itemprop="headline">Introducing Accessr: a free, privacy-first Word accessibility fixer (that runs in your browser)</h2>
-      <div class="mini">
-        <time itemprop="datePublished" datetime="2025-11-07">7 Nov 2025</time> · <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Accessr</span></span>
-      </div>
-
-      <p itemprop="description">Accessibility checks for Word files usually mean exporting to PDF, running paid scanners, or handing sensitive documents to a third-party service. Accessr flips that model: everything runs locally in your browser — no uploads, no sign-up, no data collection.</p>
-
-      <h3>What Accessr does</h3>
-      <ul>
-        <li>Detects <strong>fake headings</strong> and level skips; converts obvious fakes to real heading styles (optional).</li>
-        <li>Flags <strong>tiny text</strong> and can raise it to your minimum point size.</li>
-        <li>Finds images without <strong>alt text</strong>; inserts a clear placeholder reminder.</li>
-        <li>Turns “• ” / “- ” lines into <strong>real lists</strong> (safe, conservative).</li>
-        <li>Marks likely <strong>table header rows</strong> so they repeat correctly when exported.</li>
-        <li>Sets <strong>language</strong> on runs if missing (e.g., <code>en-AU</code>).</li>
-      </ul>
-
-      <blockquote>Accessr is not a WCAG certification service. It prepares Word documents for cleaner export (Word HTML/Mammoth/Pandoc) and faster human review. Final conformance always depends on your published format and context.</blockquote>
-
-      <h3>Why privacy-first?</h3>
-      <p>Government, universities and businesses handle sensitive drafts. Accessr never sends your file anywhere — it uses Web APIs to open, check and rewrite the <code>.docx</code> directly in your browser. You can even save this page and run it offline.</p>
-
-      <h3>Try it in under a minute</h3>
-      <ol>
-        <li>Scroll to <a href="#tool">Launch tool</a>.</li>
-        <li>Pick a <strong>.docx</strong> or download a sample from <a href="#examples">Examples</a>.</li>
-        <li>Press <em>Run checks</em> and download your <em>fixed .docx</em> and <em>report.md</em>.</li>
-      </ol>
-
-      <h3>Roadmap</h3>
-      <ul>
-        <li>Smarter heading detection (across headers/footers, styles inference).</li>
-        <li>Numbering model for proper ordered lists.</li>
-        <li>Optional export to HTML with an a11y pass.</li>
-      </ul>
-
-      <p>Questions or feedback? Open an issue on GitHub or drop us a line. If your organisation has strict review requirements, you can fork the site and host it internally.</p>
     </div>
   </section>
 
