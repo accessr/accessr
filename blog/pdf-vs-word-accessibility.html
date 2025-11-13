@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <title>PDF vs Word for Accessibility: Which Format Is Actually Better?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Compare accessibility in PDF and Word. Learn when to publish accessible .docx vs tagged PDF, common pitfalls, export settings, and best practices." />
+  <link rel="canonical" href="https://www.accessr.net/blog/pdf-vs-word-accessibility" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PDF vs Word for Accessibility: Which Format Is Actually Better?" />
+  <meta property="og:description" content="Compare accessibility in PDF and Word. Learn when to publish accessible .docx vs tagged PDF, common pitfalls, export settings, and best practices." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.accessr.net/blog/pdf-vs-word-accessibility" />
+  <meta property="og:site_name" content="Accessr" />
+  <meta property="og:image" content="https://www.accessr.net/assets/social/accessr-social-card.png" />
+  <meta property="og:image:alt" content="Accessr: Accessibility checker for Word documents" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PDF vs Word for Accessibility: Which Format Is Actually Better?" />
+  <meta name="twitter:description" content="When to use accessible .docx vs tagged PDF, plus export settings and common pitfalls." />
+  <meta name="twitter:image" content="https://www.accessr.net/assets/social/accessr-social-card.png" />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"PDF vs Word for Accessibility: Which Format Is Actually Better?",
+    "description":"Compare accessibility in PDF and Word. Learn when to publish accessible .docx vs tagged PDF, common pitfalls, export settings, and best practices.",
+    "author":{"@type":"Organization","name":"Accessr"},
+    "publisher":{"@type":"Organization","name":"Accessr","logo":{"@type":"ImageObject","url":"https://www.accessr.net/assets/logo-512.png"}},
+    "image":"https://www.accessr.net/assets/social/accessr-social-card.png",
+    "datePublished":"2025-11-13T00:00:00+11:00",
+    "dateModified":"2025-11-13T00:00:00+11:00",
+    "mainEntityOfPage":"https://www.accessr.net/blog/pdf-vs-word-accessibility"
+  }
+  </script>
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <style>
+    :root { --maxw: 72ch; --pad: 1.2rem; }
+    html { font-size: 18px; line-height: 1.6; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#111; }
+    header, main, footer { display:block; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: calc(var(--pad) * 1.5) var(--pad); }
+    nav a { margin-right: 1rem; }
+    h1, h2, h3 { line-height: 1.25; }
+    .muted { color:#555; }
+    .callout { border:2px solid #e5e5e5; background:#fafafa; padding:1rem; border-radius:8px; }
+    .grid { display:grid; gap:1rem; }
+    .proscons { display:grid; gap:1rem; grid-template-columns:1fr; }
+    .proscons > div { border:1px solid #e6e6e6; border-radius:10px; padding:1rem; background:#fff; }
+    @media (min-width: 800px){ .proscons { grid-template-columns:1fr 1fr; } }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.95em; background:#f4f4f4; padding:.1rem .35rem; border-radius:6px; }
+    footer { border-top:1px solid #eee; }
+    a { text-underline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#content" style="position:absolute;left:-9999px;">Skip to content</a>
+
+  <header class="wrap" role="banner">
+    <div><a href="https://www.accessr.net" aria-label="Accessr home">Accessr</a></div>
+    <nav aria-label="Breadcrumb">
+      <ol style="list-style:none;margin:0;padding:0;display:flex;gap:.5rem;flex-wrap:wrap">
+        <li><a href="https://www.accessr.net">Home</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="https://www.accessr.net/blog">Blog</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">PDF vs Word for Accessibility</li>
+      </ol>
+    </nav>
+  </header>
+
+  <main id="content" class="wrap" role="main">
+    <article itemscope itemtype="https://schema.org/Article">
+      <header>
+        <h1 itemprop="headline">PDF vs Word for Accessibility: Which Format Is Actually Better?</h1>
+        <p class="muted">
+          <time datetime="2025-11-13" itemprop="datePublished">13 November 2025</time> ·
+          <span itemprop="author" itemscope itemtype="https://schema.org/Organization"><span itemprop="name">Accessr</span></span>
+        </p>
+      </header>
+
+      <section itemprop="articleBody">
+        <p>There’s a long-running debate: should you publish reports as <strong>PDF</strong> or <strong>Word (.docx)</strong>? The real answer is: it depends on your workflow and whether accessibility tagging is maintained. This guide explains the trade-offs, the biggest pitfalls, and how to choose the right format for your audience.</p>
+
+        <div class="callout" role="note" aria-label="Summary">
+          <p><strong>TL;DR:</strong> A well-structured <span class="kbd">.docx</span> is often easier for assistive technologies than a poorly tagged PDF. If you export to PDF, ensure it’s <em>tagged</em> and check reading order, headings, lists and tables. When in doubt, publish both: an accessible <span class="kbd">.docx</span> and a properly tagged PDF.</p>
+        </div>
+
+        <h2>How screen readers interpret Word vs PDF</h2>
+        <ul>
+          <li><strong>Word (.docx)</strong>: When headings, lists, tables and language are correctly set, many screen readers navigate <span class="kbd">.docx</span> reliably via structural styles.</li>
+          <li><strong>PDF</strong>: Requires correct <em>tags</em> and <em>reading order</em>. If a PDF isn’t tagged—or has an incorrect order—navigation becomes painful or impossible.</li>
+        </ul>
+
+        <h2>Pros and cons</h2>
+        <div class="proscons" role="list">
+          <div role="listitem">
+            <h3>Word (.docx): Pros</h3>
+            <ul>
+              <li>Editable source: easy to fix issues and keep styles consistent.</li>
+              <li>Built-in semantics using Heading styles, list styles, table headers.</li>
+              <li>Often better for long-term records and collaboration.</li>
+              <li>File size usually smaller; simple to localise/update.</li>
+            </ul>
+            <h3>Word (.docx): Cons</h3>
+            <ul>
+              <li>Layout fidelity varies across devices/versions.</li>
+              <li>Complex layouts (text boxes, shapes) can break reading order.</li>
+              <li>Not ideal for “print-perfect” distribution.</li>
+            </ul>
+          </div>
+
+          <div role="listitem">
+            <h3>PDF: Pros</h3>
+            <ul>
+              <li>Fixed layout suitable for archiving and official “published” look.</li>
+              <li>Universally viewable; consistent print output.</li>
+              <li>Supports tagging for accessibility when done correctly.</li>
+            </ul>
+            <h3>PDF: Cons</h3>
+            <ul>
+              <li>Tagging and reading order are easy to get wrong.</li>
+              <li>Tables, lists, and footnotes are commonly mis-tagged.</li>
+              <li>Edits require re-export or specialist tools (risk of divergence from source).</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2>When to prefer Word</h2>
+        <ul>
+          <li>Drafts, collaborative documents, or frequently updated content.</li>
+          <li>When your audience needs to copy text, reuse content, or change formatting (e.g., dyslexia-friendly styles).</li>
+          <li>Internal records where the <em>source</em> must remain accessible and editable.</li>
+        </ul>
+
+        <h2>When to prefer PDF</h2>
+        <ul>
+          <li>Public-facing reports that must match a fixed layout or be printed widely.</li>
+          <li>Documents with controlled branding where pagination matters.</li>
+          <li>Archives and official releases—<em>if</em> you can ensure correct tagging.</li>
+        </ul>
+
+        <h2>Export settings that actually matter</h2>
+        <ul>
+          <li><strong>From Word to PDF:</strong> Use “Best for electronic distribution” and ensure **Document structure tags for accessibility** is enabled. After export, check the PDF with a reader that can show tags and reading order.</li>
+          <li><strong>In Word:</strong> Use real <em>Heading</em> styles, real lists, enable <em>Header Row</em> for tables, add alt text, and set the document language.</li>
+        </ul>
+
+        <h2>Common pitfalls (and fixes)</h2>
+        <ul>
+          <li><strong>Untitled PDFs / missing metadata:</strong> Set Title/Subject in Word before export; verify in the PDF.</li>
+          <li><strong>Wrong reading order:</strong> Avoid floating text boxes for essential content; keep a single, logical flow.</li>
+          <li><strong>Images of text:</strong> Use real text; if unavoidable, include the same content as text near the image.</li>
+          <li><strong>Tables used for layout:</strong> Use CSS/grid (for web) or regular paragraphs instead; in Word/PDF, ensure data tables have header cells.</li>
+          <li><strong>Raw URLs:</strong> Replace with descriptive link text (“Annual energy outlook”) before export.</li>
+          <li><strong>Language not specified:</strong> Set document language; add spans for foreign phrases.</li>
+        </ul>
+
+        <h2>Best practice for government & higher-ed</h2>
+        <ol>
+          <li>Keep the **accessible .docx** as the canonical source of truth.</li>
+          <li>Publish a **properly tagged PDF** when you need fixed layout or print fidelity.</li>
+          <li>Provide **both** formats for important public documents, with clear file labels.</li>
+          <li>Store an **audit trail** (what was checked/fixed and when).</li>
+        </ol>
+
+        <div class="callout" role="note" aria-label="Tool tip">
+          <p><strong>Try Accessr:</strong> After you finish editing in Word, run a local check-and-fix with <a href="https://www.accessr.net/">Accessr</a>. It operates entirely in your browser (no uploads), adds safe fixes (alt text placeholders, table header rows, language), and produces a simple audit report for records.</p>
+        </div>
+
+        <h2>Decision guide</h2>
+        <p><strong>Choose Word</strong> if the document is living, collaborative, or needs easy re-use. <strong>Choose PDF</strong> if you need fixed layout, brand precision, or wide distribution — but only with correct tagging. For high-stakes reports, <strong>offer both</strong>.</p>
+      </section>
+
+      <footer aria-label="Post footer">
+        <p>Next: <a href="/blog/word-accessibility-checklist-2025.html">The Complete 2025 Word Accessibility Checklist</a> — a practical, 10-minute pass before exporting.</p>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="wrap" role="contentinfo">
+    <p>&copy; <span id="y">2025</span> Accessr</p>
+  </footer>
+
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
